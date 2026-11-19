@@ -1,0 +1,5 @@
+<nav class="admin-nav">
+  <a href="/admin/pedidos" class="<%= rutaActual.startsWith('/admin/pedidos') ? 'activo' : '' %>">Pedidos</a>
+  <a href="/admin/productos" class="<%= rutaActual.startsWith('/admin/productos') ? 'activo' : '' %>">Productos</a>
+  <form method="post" action="/admin/logout"><button class="btn btn--texto">Salir</button></form>
+</nav>

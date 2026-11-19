@@ -1,0 +1,31 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+
+<p class="migas"><a href="/productos">Catálogo</a><% if (producto.categoria_slug) { %> › <a href="/productos?categoria=<%= producto.categoria_slug %>"><%= producto.categoria_nombre %></a><% } %></p>
+
+<div class="detalle">
+  <div class="detalle__imagen">
+    <% if (producto.imagen) { %>
+      <img src="<%= producto.imagen %>" alt="<%= producto.nombre %>">
+    <% } else { %>
+      <span class="placeholder" aria-hidden="true"><%= producto.nombre.charAt(0) %></span>
+    <% } %>
+  </div>
+  <div>
+    <h1><%= producto.nombre %></h1>
+    <p class="precio-grande"><%= precio(producto.precio) %></p>
+    <p><%= producto.descripcion %></p>
+    <% if (producto.stock > 0) { %>
+      <p class="stock">Stock disponible: <%= producto.stock %></p>
+      <form method="post" action="/carrito" class="form-linea">
+        <input type="hidden" name="productoId" value="<%= producto.id %>">
+        <input type="number" name="cantidad" value="1" min="1" max="<%= producto.stock %>" aria-label="Cantidad">
+        <button class="btn btn--grande">Agregar al carrito</button>
+      </form>
+    <% } else { %>
+      <p class="stock stock--agotado">Sin stock</p>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

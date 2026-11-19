@@ -1,0 +1,30 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+
+<h1>Finalizar compra</h1>
+
+<div class="checkout">
+  <form method="post" action="/pedidos" class="formulario">
+    <% if (errores.length) { %>
+      <div class="alerta alerta--error"><ul><% errores.forEach(function (e) { %><li><%= e %></li><% }) %></ul></div>
+    <% } %>
+    <label>Nombre y apellido *<input name="nombre" required value="<%= datos.nombre || '' %>"></label>
+    <label>Email *<input type="email" name="email" required value="<%= datos.email || '' %>"></label>
+    <label>Teléfono<input name="telefono" value="<%= datos.telefono || '' %>"></label>
+    <label>Dirección de envío<input name="direccion" value="<%= datos.direccion || '' %>"></label>
+    <label>Notas<textarea name="notas" rows="3"><%= datos.notas || '' %></textarea></label>
+    <button class="btn btn--grande">Confirmar pedido</button>
+  </form>
+
+  <aside class="panel">
+    <h2>Resumen</h2>
+    <ul class="lista-simple">
+      <% lineas.forEach(function (l) { %>
+        <li><%= l.cantidad %> × <%= l.producto.nombre %> — <%= precio(l.subtotal) %></li>
+      <% }) %>
+    </ul>
+    <p class="precio-grande">Total: <%= precio(total) %></p>
+  </aside>
+</div>
+
+<%- include('../partials/footer') %>

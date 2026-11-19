@@ -1,0 +1,26 @@
+<%- include('../../partials/head') %>
+<%- include('../../partials/header') %>
+<%- include('../../partials/admin-nav') %>
+
+<h1>Pedidos</h1>
+
+<% if (!pedidos.length) { %>
+  <p class="vacio">Todavía no hay pedidos.</p>
+<% } else { %>
+  <table class="tabla">
+    <thead><tr><th>#</th><th>Fecha</th><th>Cliente</th><th>Total</th><th>Estado</th></tr></thead>
+    <tbody>
+      <% pedidos.forEach(function (p) { %>
+        <tr>
+          <td><a href="/admin/pedidos/<%= p.id %>">#<%= p.id %></a></td>
+          <td><%= p.creado_en %></td>
+          <td><%= p.nombre %> <small>(<%= p.email %>)</small></td>
+          <td><%= precio(p.total) %></td>
+          <td><span class="estado estado--<%= p.estado %>"><%= p.estado %></span></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } %>
+
+<%- include('../../partials/footer') %>
