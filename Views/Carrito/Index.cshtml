@@ -3,7 +3,7 @@
     DetalleCarrito carrito = ViewBag.Carrito;
 }
 
-<div class="container seccion">
+<div class="contenedor seccion">
     <h1 class="titulo">Tu carrito</h1>
 
     @if (carrito.EstaVacio)
@@ -11,15 +11,15 @@
         <div class="vacio">
             <h2>Tu carrito está vacío</h2>
             <p>Buscá lo que necesitás en el catálogo y tocá "Agregar".</p>
-            <a class="btn-solid theme-primary boton" asp-controller="Productos" asp-action="Index">Ver el catálogo</a>
+            <a class="boton" asp-controller="Productos" asp-action="Index">Ver el catálogo</a>
         </div>
     }
     else
     {
         <div class="tabla-contenedor">
-            <table class="table tabla">
+            <table class="tabla">
                 <thead>
-                    <tr><th>Producto</th><th>Precio</th><th>Cantidad</th><th>Subtotal</th><th><span class="visually-hidden">Acciones</span></th></tr>
+                    <tr><th>Producto</th><th>Precio</th><th>Cantidad</th><th>Subtotal</th><th><span class="solo-lectores">Acciones</span></th></tr>
                 </thead>
                 <tbody>
                     @foreach (var linea in carrito.Lineas)
@@ -29,8 +29,8 @@
                             <td>@Vistas.Precio(linea.Producto.Precio)</td>
                             <td>
                                 <form class="fila-formulario" asp-controller="Carrito" asp-action="Actualizar" asp-route-id="@linea.Producto.ID" method="post">
-                                    <label class="visually-hidden" for="cantidad-@linea.Producto.ID">Cantidad de @linea.Producto.Nombre</label>
-                                    <input class="form-control campo-cantidad" id="cantidad-@linea.Producto.ID" name="cantidad" type="number" value="@linea.Cantidad" min="0" max="@linea.Producto.Stock">
+                                    <label class="solo-lectores" for="cantidad-@linea.Producto.ID">Cantidad de @linea.Producto.Nombre</label>
+                                    <input class="campo campo-cantidad" id="cantidad-@linea.Producto.ID" name="cantidad" type="number" value="@linea.Cantidad" min="0" max="@linea.Producto.Stock">
                                     <button class="boton-link" type="submit">Actualizar</button>
                                 </form>
                             </td>
@@ -50,8 +50,8 @@
         </div>
 
         <div class="acciones">
-            <a class="btn-outline theme-primary boton" asp-controller="Productos" asp-action="Index">Seguir comprando</a>
-            <a class="btn-solid theme-primary boton" asp-controller="Pedidos" asp-action="Checkout">Finalizar compra</a>
+            <a class="boton boton-borde" asp-controller="Productos" asp-action="Index">Seguir comprando</a>
+            <a class="boton" asp-controller="Pedidos" asp-action="Checkout">Finalizar compra</a>
         </div>
     }
 </div>

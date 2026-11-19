@@ -17,7 +17,7 @@ public static class Vistas
         vista.Actual(controlador) != null && string.Equals(vista.RouteData.Values["action"]?.ToString(), accion, StringComparison.OrdinalIgnoreCase) ? "page" : null;
 
     public static string ClaseLink(this ViewContext vista, string controlador, string? accion = null) =>
-        (accion == null ? vista.Actual(controlador) : vista.ActualAccion(controlador, accion)) != null ? "nav-link active" : "nav-link";
+        (accion == null ? vista.Actual(controlador) : vista.ActualAccion(controlador, accion)) != null ? "menu-link activo" : "menu-link";
 
     public static string AquiMismo(this ViewContext vista) =>
         vista.HttpContext.Request.Path + vista.HttpContext.Request.QueryString;

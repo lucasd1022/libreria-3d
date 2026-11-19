@@ -2,19 +2,19 @@
     ViewData["Title"] = "Productos";
 }
 
-<div class="container seccion">
+<div class="contenedor seccion">
     <partial name="_PanelMenu" />
     <div class="encabezado">
         <h1 class="titulo">Productos</h1>
-        <a class="btn-solid theme-primary boton" asp-controller="Panel" asp-action="NuevoProducto">Nuevo producto</a>
+        <a class="boton" asp-controller="Panel" asp-action="NuevoProducto">Nuevo producto</a>
     </div>
 
     <form class="buscador" asp-controller="Panel" asp-action="Productos" method="get">
-        <div class="form-field">
-            <label class="form-label" for="texto">Buscar</label>
-            <input class="form-control" id="texto" name="texto" type="search" value="@ViewBag.Texto">
+        <div class="fila-campo">
+            <label class="campo-titulo" for="texto">Buscar</label>
+            <input class="campo" id="texto" name="texto" type="search" value="@ViewBag.Texto">
         </div>
-        <button class="btn-solid theme-primary boton" type="submit">Buscar</button>
+        <button class="boton" type="submit">Buscar</button>
     </form>
 
     @if (ViewBag.Productos.Count == 0)
@@ -24,9 +24,9 @@
     else
     {
         <div class="tabla-contenedor">
-            <table class="table tabla">
+            <table class="tabla">
                 <thead>
-                    <tr><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Estado</th><th><span class="visually-hidden">Acciones</span></th></tr>
+                    <tr><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Estado</th><th><span class="solo-lectores">Acciones</span></th></tr>
                 </thead>
                 <tbody>
                     @foreach (Producto producto in ViewBag.Productos)
@@ -36,16 +36,18 @@
                             <td>@(producto.Categoria ?? "—")</td>
                             <td>@Vistas.Precio(producto.Precio)</td>
                             <td class="@(producto.HayStock ? "" : "texto-error")">@producto.Stock</td>
-                            <td><span class="badge etiqueta @(producto.Activo ? "etiqueta-exito" : "")">@(producto.Activo ? "Visible" : "Oculto")</span></td>
-                            <td class="celda-acciones">
+                            <td><span class="etiqueta @(producto.Activo ? "etiqueta-exito" : "")">@(producto.Activo ? "Visible" : "Oculto")</span></td>
+                            <td>
+                                <div class="celda-acciones">
                                 <a asp-controller="Panel" asp-action="EditarProducto" asp-route-id="@producto.ID">Editar</a>
                                 <details class="confirmar">
                                     <summary class="boton-link boton-link-peligro">Eliminar</summary>
                                     <form asp-controller="Panel" asp-action="EliminarProducto" asp-route-id="@producto.ID" method="post">
                                         <p>¿Eliminar "@producto.Nombre"? No se puede deshacer.</p>
-                                        <button class="btn-solid theme-danger boton btn-sm" type="submit">Sí, eliminar</button>
+                                        <button class="boton boton-peligro boton-chico" type="submit">Sí, eliminar</button>
                                     </form>
                                 </details>
+                                </div>
                             </td>
                         </tr>
                     }

@@ -3,7 +3,7 @@
     ViewData["Title"] = "¡Gracias por tu compra!";
 }
 
-<div class="container seccion angosto">
+<div class="contenedor seccion angosto">
     <div class="tarjeta">
         <h1 class="titulo">¡Gracias, @pedido.Nombre!</h1>
         <p>Recibimos tu pedido <strong>#@pedido.ID</strong> por un total de <strong>@Vistas.Precio(pedido.Total)</strong>.</p>
@@ -14,6 +14,6 @@
                 <li>@item.Cantidad × @item.Nombre <span class="derecha">@Vistas.Precio(item.Subtotal)</span></li>
             }
         </ul>
-        <a class="btn-solid theme-primary boton" asp-controller="Productos" asp-action="Index">Volver al catálogo</a>
+        <a class="boton" asp-controller="Productos" asp-action="Index">Volver al catálogo</a>
     </div>
 </div>

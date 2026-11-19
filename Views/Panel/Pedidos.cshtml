@@ -3,17 +3,17 @@
     string? estadoActual = ViewBag.Estado;
 }
 
-<div class="container seccion">
+<div class="contenedor seccion">
     <partial name="_PanelMenu" />
     <div class="encabezado">
         <h1 class="titulo">Pedidos</h1>
     </div>
 
     <div class="etiquetas filtros-estado">
-        <a class="badge etiqueta etiqueta-link @(estadoActual == null ? "etiqueta-principal" : "")" asp-controller="Panel" asp-action="Pedidos">Todos</a>
+        <a class="etiqueta etiqueta-link @(estadoActual == null ? "etiqueta-principal" : "")" asp-controller="Panel" asp-action="Pedidos">Todos</a>
         @foreach (var estado in Pedido.Estados)
         {
-            <a class="badge etiqueta etiqueta-link @(estadoActual == estado ? "etiqueta-principal" : "")" asp-controller="Panel" asp-action="Pedidos" asp-route-estado="@estado">@estado</a>
+            <a class="etiqueta etiqueta-link @(estadoActual == estado ? "etiqueta-principal" : "")" asp-controller="Panel" asp-action="Pedidos" asp-route-estado="@estado">@estado</a>
         }
     </div>
 
@@ -26,7 +26,7 @@
     else
     {
         <div class="tabla-contenedor">
-            <table class="table tabla">
+            <table class="tabla">
                 <thead>
                     <tr><th>#</th><th>Fecha</th><th>Cliente</th><th>Productos</th><th>Total</th><th>Estado</th></tr>
                 </thead>
@@ -39,7 +39,7 @@
                             <td>@pedido.Nombre<br><span class="texto-suave">@pedido.Email</span></td>
                             <td>@pedido.CantidadProductos</td>
                             <td>@Vistas.Precio(pedido.Total)</td>
-                            <td><span class="badge etiqueta @pedido.ClaseEstado">@pedido.Estado</span></td>
+                            <td><span class="etiqueta @pedido.ClaseEstado">@pedido.Estado</span></td>
                         </tr>
                     }
                 </tbody>

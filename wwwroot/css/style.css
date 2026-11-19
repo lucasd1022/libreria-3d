@@ -1,3 +1,71 @@
+/* ---------------------------------------------- base ---------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul {
+  margin: 0;
+}
+
+p,
+ul {
+  margin-bottom: 12px;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+.contenedor {
+  width: min(1140px, 100% - 32px);
+  margin-inline: auto;
+}
+
+.columnas {
+  display: grid;
+  gap: 30px;
+  align-items: start;
+}
+
+.columnas-mitad {
+  grid-template-columns: 1fr 1fr;
+}
+
+.columnas-fijas {
+  gap: 16px;
+}
+
+.columnas-7-5 {
+  grid-template-columns: 7fr 5fr;
+}
+
+.columnas-5-7 {
+  grid-template-columns: 5fr 7fr;
+}
+
+.columnas-pie {
+  grid-template-columns: 2fr 1fr 1fr;
+}
+
+.solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 /* ---------------------------------------------- general ---------------------------------------------- */
 
 /* Colores de Librería 3D
@@ -58,6 +126,15 @@ h4 {
 
 .angosto-chico {
   max-width: 480px;
+}
+
+.contenedor.angosto,
+.contenedor.angosto-chico {
+  width: min(100% - 32px, var(--ancho, 860px));
+}
+
+.contenedor.angosto-chico {
+  --ancho: 480px;
 }
 
 .titulo {
@@ -127,20 +204,35 @@ h4 {
 /* ---------------------------------------------- menú y pie ---------------------------------------------- */
 
 .menu-tienda {
-  padding: 10px 0;
+  padding: 12px 0;
   background-color: #ffffff;
   border-bottom: 1px solid #e6e1d8;
 }
 
-.menu-tienda .container {
+.menu-fila {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
-.menu-tienda .navbar-nav {
+.menu {
+  display: flex;
   align-items: center;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+}
+
+.menu-link {
+  color: #5f6368;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.menu-link:hover,
+.menu-link.activo {
+  color: #1f4e5f;
 }
 
 .logo {
@@ -169,9 +261,15 @@ h4 {
 }
 
 .contador {
+  display: inline-block;
+  min-width: 22px;
+  padding: 0 7px;
   background-color: #1f4e5f;
   color: #ffffff;
   border-radius: 50px;
+  font-size: 13px;
+  line-height: 22px;
+  text-align: center;
   margin-left: 4px;
 }
 
@@ -192,6 +290,12 @@ footer h4 {
   text-transform: uppercase;
   letter-spacing: 2px;
   color: #f4b942;
+  margin-bottom: 10px;
+}
+
+.logo-claro .logo-letra {
+  background-color: #f4b942;
+  color: #1f4e5f;
 }
 
 footer a,
@@ -217,11 +321,50 @@ footer .copy {
 /* ---------------------------------------------- botones ---------------------------------------------- */
 
 .boton {
+  display: inline-block;
+  font: inherit;
   font-weight: 700;
   padding: 10px 22px;
+  border: 2px solid #1f4e5f;
   border-radius: 50px;
+  background-color: #1f4e5f;
+  color: #ffffff;
+  text-align: center;
   text-decoration: none;
-  transition: background-color 0.2s, color 0.2s;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.boton:hover {
+  background-color: #3d7a8c;
+  border-color: #3d7a8c;
+  color: #ffffff;
+}
+
+.boton-borde {
+  background-color: transparent;
+  color: #1f4e5f;
+}
+
+.boton-borde:hover {
+  background-color: #1f4e5f;
+  border-color: #1f4e5f;
+  color: #ffffff;
+}
+
+.boton-peligro,
+.boton-peligro:hover {
+  background-color: #b3261e;
+  border-color: #b3261e;
+}
+
+.boton-chico {
+  padding: 5px 14px;
+  font-size: 15px;
+}
+
+.boton-ancho {
+  width: 100%;
 }
 
 .boton-acento {
@@ -279,6 +422,7 @@ footer .copy {
 }
 
 .etiqueta {
+  display: inline-block;
   background-color: #f0ece4;
   color: #374151;
   border: 1px solid #f0ece4;
@@ -348,7 +492,7 @@ footer .copy {
   box-shadow: 0 1px 2px rgba(31, 78, 95, 0.06);
 }
 
-.tarjeta .card-title {
+.tarjeta .tarjeta-subtitulo {
   font-size: 21px;
   color: #1f4e5f;
   margin: 0 0 12px;
@@ -467,13 +611,32 @@ footer .copy {
 
 /* ---------------------------------------------- formularios ---------------------------------------------- */
 
-.formulario .form-field {
+.formulario .fila-campo {
   margin-bottom: 18px;
 }
 
-.form-label {
+.campo-titulo {
   font-weight: 700;
   display: block;
+}
+
+.campo {
+  display: block;
+  width: 100%;
+  font: inherit;
+  padding: 9px 12px;
+  border: 1px solid #d6d0c4;
+  border-radius: 10px;
+  background-color: #ffffff;
+  color: #1f1f1f;
+}
+
+.campo:focus {
+  border-color: #1f4e5f;
+}
+
+textarea.campo {
+  resize: vertical;
 }
 
 .error-texto {
@@ -487,7 +650,7 @@ footer .copy {
   display: block;
 }
 
-.campo-error .form-control {
+.campo-error .campo {
   border-color: #b3261e;
 }
 
@@ -509,7 +672,7 @@ input[type="checkbox"] {
   margin-bottom: 25px;
 }
 
-.buscador .form-field {
+.buscador .fila-campo {
   flex: 1 1 220px;
   margin: 0;
 }
@@ -534,8 +697,22 @@ input[type="checkbox"] {
 }
 
 .tabla {
-  margin: 0;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla th,
+.tabla td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f0ece4;
+  text-align: left;
   vertical-align: middle;
+}
+
+.tabla tfoot th {
+  border-bottom: 0;
+  font-size: 18px;
+  color: #1f4e5f;
 }
 
 .tabla thead th {
@@ -551,6 +728,14 @@ input[type="checkbox"] {
   gap: 14px;
 }
 
+.confirmar summary {
+  list-style: none;
+}
+
+.confirmar summary::-webkit-details-marker {
+  display: none;
+}
+
 .confirmar[open] form {
   position: absolute;
   z-index: 5;
@@ -564,18 +749,20 @@ input[type="checkbox"] {
 
 .panel-menu {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   border-bottom: 1px solid #e6e1d8;
   margin-bottom: 15px;
 }
 
-.panel-menu .nav-link {
+.panel-menu .menu-link {
+  display: inline-block;
   padding: 8px 14px;
   font-weight: 700;
   color: #5f6368;
 }
 
-.panel-menu .nav-link.active {
+.panel-menu .menu-link.activo {
   color: #1f4e5f;
   border-bottom: 3px solid #f4b942;
 }
@@ -596,7 +783,10 @@ input[type="checkbox"] {
     align-items: flex-start;
   }
 
-  .menu-tienda .navbar-nav {
-    align-items: flex-start;
+  .columnas-mitad:not(.columnas-fijas),
+  .columnas-7-5,
+  .columnas-5-7,
+  .columnas-pie {
+    grid-template-columns: 1fr;
   }
 }

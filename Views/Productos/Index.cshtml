@@ -3,7 +3,7 @@
     int? categoriaActual = ViewBag.Categoria;
 }
 
-<div class="container seccion">
+<div class="contenedor seccion">
     <div class="encabezado">
         <div>
             <h1 class="titulo">Catálogo</h1>
@@ -12,13 +12,13 @@
     </div>
 
     <form class="buscador" asp-controller="Productos" asp-action="Index" method="get">
-        <div class="form-field">
-            <label class="form-label" for="texto">Buscar</label>
-            <input class="form-control" id="texto" name="texto" type="search" value="@ViewBag.Texto" placeholder="Cuaderno, fibras, carpeta…">
+        <div class="fila-campo">
+            <label class="campo-titulo" for="texto">Buscar</label>
+            <input class="campo" id="texto" name="texto" type="search" value="@ViewBag.Texto" placeholder="Cuaderno, fibras, carpeta…">
         </div>
-        <div class="form-field">
-            <label class="form-label" for="categoria">Categoría</label>
-            <select class="form-control" id="categoria" name="categoria">
+        <div class="fila-campo">
+            <label class="campo-titulo" for="categoria">Categoría</label>
+            <select class="campo" id="categoria" name="categoria">
                 <option value="">Todas</option>
                 @foreach (Categoria categoria in ViewBag.Categorias)
                 {
@@ -26,7 +26,7 @@
                 }
             </select>
         </div>
-        <button class="btn-solid theme-primary boton" type="submit">Buscar</button>
+        <button class="boton" type="submit">Buscar</button>
     </form>
 
     @if (ViewBag.Productos.Count == 0)

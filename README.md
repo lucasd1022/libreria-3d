@@ -36,7 +36,7 @@
 | Backend | ASP.NET Core MVC (.NET 9) |
 | Base de datos | SQL Server |
 | Acceso a datos | Dapper 2.1.89 + Microsoft.Data.SqlClient 7.1.1 |
-| Frontend | HTML, CSS y Bootstrap 6 (sin JavaScript propio) |
+| Frontend | HTML y CSS propio, sin frameworks ni JavaScript |
 
 ## 📂 Estructura del proyecto
 

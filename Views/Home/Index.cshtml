@@ -3,19 +3,19 @@
 }
 
 <section class="portada">
-    <div class="container">
+    <div class="contenedor">
         <h1 class="titulo titulo-portada">Todo para estudiar, crear y organizarte</h1>
         <p>Cuadernos, útiles escolares, arte y oficina. Enviamos a todo el país.</p>
-        <a class="btn-solid theme-primary boton boton-acento" asp-controller="Productos" asp-action="Index">Ver el catálogo</a>
+        <a class="boton boton-acento" asp-controller="Productos" asp-action="Index">Ver el catálogo</a>
     </div>
 </section>
 
-<div class="container seccion">
+<div class="contenedor seccion">
     <h2 class="subtitulo">Categorías</h2>
     <div class="etiquetas">
         @foreach (Categoria categoria in ViewBag.Categorias)
         {
-            <a class="badge etiqueta etiqueta-link" asp-controller="Productos" asp-action="Index" asp-route-categoria="@categoria.ID">@categoria.Nombre (@categoria.CantidadProductos)</a>
+            <a class="etiqueta etiqueta-link" asp-controller="Productos" asp-action="Index" asp-route-categoria="@categoria.ID">@categoria.Nombre (@categoria.CantidadProductos)</a>
         }
     </div>
 

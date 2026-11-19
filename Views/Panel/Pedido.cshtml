@@ -3,20 +3,20 @@
     ViewData["Title"] = $"Pedido #{pedido.ID}";
 }
 
-<div class="container seccion">
+<div class="contenedor seccion">
     <partial name="_PanelMenu" />
     <div class="encabezado">
         <div>
             <h1 class="titulo">Pedido #@pedido.ID</h1>
-            <p class="texto-suave">@Vistas.Fecha(pedido.Fecha) · <span class="badge etiqueta @pedido.ClaseEstado">@pedido.Estado</span></p>
+            <p class="texto-suave">@Vistas.Fecha(pedido.Fecha) · <span class="etiqueta @pedido.ClaseEstado">@pedido.Estado</span></p>
         </div>
-        <a class="btn-outline theme-primary boton" asp-controller="Panel" asp-action="Pedidos">Volver a pedidos</a>
+        <a class="boton boton-borde" asp-controller="Panel" asp-action="Pedidos">Volver a pedidos</a>
     </div>
 
-    <div class="row g-4">
-        <div class="md:col-5">
+    <div class="columnas columnas-5-7">
+        <div>
             <div class="tarjeta">
-                <h2 class="card-title">Cliente</h2>
+                <h2 class="tarjeta-subtitulo">Cliente</h2>
                 <ul class="lista-datos">
                     <li><strong>@pedido.Nombre</strong></li>
                     <li><a href="mailto:@pedido.Email">@pedido.Email</a></li>
@@ -29,23 +29,23 @@
                 }
             </div>
             <div class="tarjeta">
-                <h2 class="card-title">Estado</h2>
+                <h2 class="tarjeta-subtitulo">Estado</h2>
                 <form class="fila-formulario" asp-controller="Panel" asp-action="CambiarEstado" asp-route-id="@pedido.ID" method="post">
-                    <label class="visually-hidden" for="estado">Estado</label>
-                    <select class="form-control" id="estado" name="estado">
+                    <label class="solo-lectores" for="estado">Estado</label>
+                    <select class="campo" id="estado" name="estado">
                         @foreach (var estado in Pedido.Estados)
                         {
                             <option value="@estado" selected="@(pedido.Estado == estado)">@estado</option>
                         }
                     </select>
-                    <button class="btn-solid theme-primary boton" type="submit">Guardar</button>
+                    <button class="boton" type="submit">Guardar</button>
                 </form>
             </div>
         </div>
-        <div class="md:col-7">
+        <div>
             <div class="tarjeta">
-                <h2 class="card-title">Productos</h2>
-                <table class="table tabla">
+                <h2 class="tarjeta-subtitulo">Productos</h2>
+                <table class="tabla">
                     <thead><tr><th>Producto</th><th>Precio</th><th>Cantidad</th><th>Subtotal</th></tr></thead>
                     <tbody>
                         @foreach (var item in pedido.Items)
