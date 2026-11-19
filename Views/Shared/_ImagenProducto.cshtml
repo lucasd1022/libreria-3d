@@ -1,0 +1,9 @@
+@model Producto
+@if (!string.IsNullOrEmpty(Model.Imagen))
+{
+    <img src="@Model.Imagen" alt="@Model.Nombre" loading="lazy">
+}
+else
+{
+    <span class="imagen-vacia" aria-hidden="true">@Model.Inicial</span>
+}

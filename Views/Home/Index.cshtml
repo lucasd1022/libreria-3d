@@ -1,0 +1,39 @@
+@{
+    ViewData["Title"] = "";
+}
+
+<section class="portada">
+    <div class="container">
+        <h1 class="titulo titulo-portada">Todo para estudiar, crear y organizarte</h1>
+        <p>Cuadernos, útiles escolares, arte y oficina. Enviamos a todo el país.</p>
+        <a class="btn-solid theme-primary boton boton-acento" asp-controller="Productos" asp-action="Index">Ver el catálogo</a>
+    </div>
+</section>
+
+<div class="container seccion">
+    <h2 class="subtitulo">Categorías</h2>
+    <div class="etiquetas">
+        @foreach (Categoria categoria in ViewBag.Categorias)
+        {
+            <a class="badge etiqueta etiqueta-link" asp-controller="Productos" asp-action="Index" asp-route-categoria="@categoria.ID">@categoria.Nombre (@categoria.CantidadProductos)</a>
+        }
+    </div>
+
+    <h2 class="subtitulo">Novedades</h2>
+    @if (ViewBag.Nuevos.Count == 0)
+    {
+        <div class="vacio">
+            <h3>Todavía no hay productos</h3>
+            <p>Cargalos desde el panel de administración.</p>
+        </div>
+    }
+    else
+    {
+        <div class="grilla-productos">
+            @foreach (Producto producto in ViewBag.Nuevos)
+            {
+                <partial name="_ProductoTarjeta" model="producto" />
+            }
+        </div>
+    }
+</div>

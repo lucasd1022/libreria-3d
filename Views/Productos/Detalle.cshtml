@@ -1,0 +1,44 @@
+@{
+    Producto producto = ViewBag.Producto;
+    ViewData["Title"] = producto.Nombre;
+}
+
+<div class="container seccion">
+    <p class="migas">
+        <a asp-controller="Productos" asp-action="Index">Catálogo</a>
+        @if (producto.IDCategoria.HasValue)
+        {
+            <span>›</span> <a asp-controller="Productos" asp-action="Index" asp-route-categoria="@producto.IDCategoria">@producto.Categoria</a>
+        }
+    </p>
+
+    <div class="row g-5">
+        <div class="md:col-6">
+            <div class="producto-imagen producto-imagen-grande">
+                <partial name="_ImagenProducto" model="producto" />
+            </div>
+        </div>
+        <div class="md:col-6">
+            <h1 class="titulo">@producto.Nombre</h1>
+            <p class="precio precio-grande">@Vistas.Precio(producto.Precio)</p>
+            @if (!string.IsNullOrEmpty(producto.Descripcion))
+            {
+                <p class="texto-con-saltos">@producto.Descripcion</p>
+            }
+
+            @if (producto.HayStock)
+            {
+                <p class="texto-exito">Hay stock: @producto.Stock unidades</p>
+                <form class="fila-formulario" asp-controller="Carrito" asp-action="Agregar" asp-route-id="@producto.ID" asp-route-volver="@ViewContext.AquiMismo()" method="post">
+                    <label class="visually-hidden" for="cantidad">Cantidad</label>
+                    <input class="form-control campo-cantidad" id="cantidad" name="cantidad" type="number" value="1" min="1" max="@producto.Stock">
+                    <button class="btn-solid theme-primary boton" type="submit">Agregar al carrito</button>
+                </form>
+            }
+            else
+            {
+                <p><span class="badge etiqueta etiqueta-error">Sin stock</span></p>
+            }
+        </div>
+    </div>
+</div>

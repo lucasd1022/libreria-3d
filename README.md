@@ -1,78 +1,102 @@
 # Librería 3D
 
-Tienda online de artículos de librería: catálogo, carrito, checkout y panel de administración.
+![Logo de Librería 3D](wwwroot/img/favicon.svg)
 
-**Stack:** Node.js + Express · vistas EJS renderizadas en el servidor · SQLite (`better-sqlite3`) · arquitectura **MVC**.
+## 📌 Descripción y objetivos del proyecto
 
-## Puesta en marcha
+**Librería 3D** es una tienda online de artículos de librería hecha con **ASP.NET Core MVC**. Muestra el catálogo de productos, permite armar un carrito y hacer el pedido, y tiene un panel para que la librería cargue productos y siga los pedidos.
 
-Requisitos: Node.js 20 o superior.
+### 🎯 Objetivos
 
+- Que una persona pueda buscar productos, armar su carrito y hacer un pedido sin crear una cuenta.
+- Que la librería pueda cargar y editar productos, controlar el stock y seguir cada pedido hasta que se entrega.
+- Guardar y consultar toda la información en **SQL Server** usando **stored procedures** llamados con **Dapper**.
+
+---
+
+## 🧩 Funcionalidades implementadas
+
+- **Catálogo** con buscador por texto y filtro por categoría, y una página para cada producto.
+- **Inicio** con las categorías y los últimos productos cargados.
+- **Carrito** guardado en la sesión: agregar, cambiar la cantidad y quitar productos. No deja agregar más unidades que el stock disponible.
+- **Finalizar compra**: la persona deja su nombre, email y, si quiere, teléfono, dirección y notas. El pedido se guarda y el stock se descuenta en una sola transacción: si mientras tanto se terminó el stock de algún producto, no se guarda nada y se le avisa.
+- **Confirmación del pedido**, que solo puede ver quien lo hizo.
+- **Panel de administración** con inicio de sesión:
+  - **Pedidos**: lista con filtro por estado, detalle de cada pedido y cambio de estado (Pendiente, Pagado, Enviado, Entregado, Cancelado). El menú muestra cuántos pedidos están pendientes.
+  - **Productos**: crear, editar, ocultar y eliminar productos, con precio, stock, categoría e imagen. Los pedidos viejos conservan el nombre y el precio con el que se vendió cada producto.
+  - **Contraseña**: cambiar la contraseña del administrador.
+- **Seguridad**: contraseñas guardadas con PBKDF2, todos los formularios protegidos con token antifalsificación y validación de todos los datos en el servidor.
+
+---
+
+## 🛠 Tecnologías
+
+| Parte | Tecnología |
+|-------|------------|
+| Backend | ASP.NET Core MVC (.NET 9) |
+| Base de datos | SQL Server |
+| Acceso a datos | Dapper 2.1.89 + Microsoft.Data.SqlClient 7.1.1 |
+| Frontend | HTML, CSS y Bootstrap 6 (sin JavaScript propio) |
+
+## 📂 Estructura del proyecto
+
+| Carpeta | Qué tiene |
+|---------|-----------|
+| `Controllers/` | Reciben el pedido, llaman al Model y devuelven la vista |
+| `Models/` | Clases del proyecto, validaciones y la clase `BD.cs` |
+| `Views/` | Vistas Razor que leen los datos desde `ViewBag` |
+| `wwwroot/` | La hoja de estilos `css/style.css` e imágenes |
+| `SQL/` | Scripts de la base: estructura, datos de prueba y stored procedures |
+| `script.sql` | Script completo para crear la base con datos y procedures |
+
+| Controller | Qué hace |
+|------------|----------|
+| `HomeController` | Inicio, contacto y páginas de error |
+| `ProductosController` | Catálogo y detalle de cada producto |
+| `CarritoController` | Agregar, actualizar y quitar productos del carrito |
+| `PedidosController` | Finalizar la compra y confirmación del pedido |
+| `CuentaController` | Iniciar y cerrar la sesión del administrador |
+| `PanelController` | Panel de administración: pedidos, productos y contraseña |
+
+Toda la base se usa desde `Models/BD.cs`. Cada método llama a un stored procedure con Dapper:
+
+```c#
+public static Producto? ObtenerProductoPorId(int id) =>
+    Uno<Producto>("ObtenerProductoPorId", new { ID = id });
+```
+
+---
+
+## ▶ Instrucciones para ejecutar
+
+1. Clonar el repositorio:
 ```bash
-npm install
-cp .env.example .env      # editá las credenciales de admin y SESSION_SECRET
-npm run db:seed           # crea la base y carga productos de ejemplo
-npm run dev               # http://localhost:3000 (se reinicia al guardar cambios)
+git clone https://github.com/lucasd1022/libreria-3d.git
 ```
-
-En producción: `npm start` con `NODE_ENV=production`.
-
-## Estructura (MVC)
-
+2. Entrar en la carpeta del proyecto:
+```bash
+cd libreria-3d
 ```
-├── public/                    Archivos estáticos (servidos tal cual)
-│   ├── css/styles.css
-│   ├── js/main.js
-│   └── img/productos/         Fotos de productos
-└── src/
-    ├── server.js              Punto de entrada: levanta el servidor
-    ├── app.js                 Configura Express, middlewares y rutas
-    ├── config/                Lee variables de entorno (.env)
-    ├── db/
-    │   ├── connection.js      Conexión SQLite (crea las tablas si faltan)
-    │   ├── schema.sql         Tablas: categorias, productos, pedidos, pedido_items
-    │   ├── init.js            npm run db:init
-    │   └── seed.js            npm run db:seed
-    ├── models/          (M)   Acceso a datos y reglas de negocio
-    │   ├── Producto.js
-    │   ├── Categoria.js
-    │   ├── Pedido.js          Crea pedidos y descuenta stock en una transacción
-    │   └── Carrito.js         Carrito guardado en la sesión
-    ├── views/           (V)   Plantillas EJS
-    │   ├── partials/          head, header, footer, tarjeta de producto…
-    │   ├── productos/  carrito/  pedidos/
-    │   ├── admin/             login, ABM de productos, gestión de pedidos
-    │   └── errors/            404 y 500
-    ├── controllers/     (C)   Reciben el request, usan modelos y renderizan vistas
-    │   └── admin/
-    ├── routes/                Mapean URLs → controladores
-    │   ├── tienda.js
-    │   └── admin.js
-    └── middlewares/           Sesión de admin, mensajes flash, variables globales, errores
+3. Crear la base de datos: abrir `script.sql` en SQL Server Management Studio y ejecutarlo. También se pueden ejecutar en orden `SQL/1_Estructura.sql`, `SQL/2_DatosDePrueba.sql` y `SQL/3_StoredProcedures.sql`.
+
+> El script crea el usuario de base `alumno`, que usa el login `alumno` del servidor. Si tu SQL Server no tiene ese login, crealo antes de ejecutar el script.
+
+4. Revisar la cadena de conexión en `appsettings.json`. Por defecto usa `Server=localhost;Database=Libreria3D;Trusted_Connection=True;`. Ahí también están el nombre, el email y el WhatsApp de la tienda que se muestran en la página de contacto.
+5. Ejecutar el programa:
+```bash
+dotnet watch run
 ```
+6. Para entrar al panel, ir a **Ingresar** (al pie de la página) con el administrador de prueba:
+   - Email: `admin@libreria3d.com`
+   - Contraseña: `Libreria2026`
 
-El flujo de un pedido es: **ruta** → **controlador** → **modelo** (consulta/escribe en SQLite) → **controlador** → **vista**.
+> Cambiá esa contraseña desde **Panel → Contraseña** antes de publicar la tienda.
 
-## Rutas
+---
 
-| Tienda | |
-|---|---|
-| `GET /` | Inicio con categorías y novedades |
-| `GET /productos?categoria=&q=` | Catálogo con filtro y búsqueda |
-| `GET /productos/:slug` | Detalle de producto |
-| `GET /carrito` · `POST /carrito` · `PUT/DELETE /carrito/:id` | Carrito |
-| `GET /checkout` · `POST /pedidos` | Finalizar compra |
-| `GET /contacto` | Contacto |
+## 🔜 Próximos pasos
 
-| Admin (requiere login en `/admin/login`) | |
-|---|---|
-| `/admin/productos` | Alta, edición, baja y stock de productos |
-| `/admin/pedidos` | Listado de pedidos y cambio de estado |
-
-## Próximos pasos sugeridos
-
-- Integrar un medio de pago (por ejemplo Mercado Pago).
-- Subida de imágenes desde el panel (hoy se carga una URL).
-- Envío de email de confirmación al cliente.
-- Guardar las sesiones en la base (hoy están en memoria y se pierden al reiniciar).
-- Tests automáticos de modelos y rutas.
+- Cobrar online (por ejemplo, con Mercado Pago).
+- Subir las fotos de los productos desde el panel (hoy se escribe la ruta o el link de la imagen).
+- Mandar un mail al cliente cuando hace el pedido y cuando cambia de estado.
+- Cuentas de cliente para ver el historial de pedidos.

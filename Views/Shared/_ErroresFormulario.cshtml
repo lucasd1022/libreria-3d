@@ -1,0 +1,4 @@
+@if (Html.ErroresGenerales().Any())
+{
+    <p class="mensaje mensaje-error" role="alert">@string.Join(" ", Html.ErroresGenerales())</p>
+}

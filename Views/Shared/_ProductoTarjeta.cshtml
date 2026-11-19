@@ -1,0 +1,26 @@
+@model Producto
+<article class="tarjeta tarjeta-producto">
+    <a class="producto-imagen" asp-controller="Productos" asp-action="Detalle" asp-route-id="@Model.ID" tabindex="-1">
+        <partial name="_ImagenProducto" model="Model" />
+    </a>
+    <div class="producto-datos">
+        @if (!string.IsNullOrEmpty(Model.Categoria))
+        {
+            <span class="badge etiqueta">@Model.Categoria</span>
+        }
+        <h3 class="tarjeta-titulo"><a asp-controller="Productos" asp-action="Detalle" asp-route-id="@Model.ID">@Model.Nombre</a></h3>
+        <div class="producto-pie">
+            <strong class="precio">@Vistas.Precio(Model.Precio)</strong>
+            @if (Model.HayStock)
+            {
+                <form asp-controller="Carrito" asp-action="Agregar" asp-route-id="@Model.ID" asp-route-volver="@ViewContext.AquiMismo()" method="post">
+                    <button class="btn-solid theme-primary boton btn-sm" type="submit">Agregar</button>
+                </form>
+            }
+            else
+            {
+                <span class="badge etiqueta etiqueta-error">Sin stock</span>
+            }
+        </div>
+    </div>
+</article>

@@ -1,0 +1,13 @@
+@{
+    ViewData["Title"] = "Algo salió mal";
+}
+
+<section class="container seccion seccion-centrada">
+    <h1 class="titulo">Algo salió mal</h1>
+    <p>No pudimos procesar tu pedido. Probá de nuevo en unos minutos o volvé al inicio.</p>
+    @if (!string.IsNullOrEmpty(ViewBag.CodigoSolicitud))
+    {
+        <p class="texto-suave">Código de la solicitud: @ViewBag.CodigoSolicitud</p>
+    }
+    <a class="btn-solid theme-primary boton" asp-controller="Home" asp-action="Index">Volver al inicio</a>
+</section>

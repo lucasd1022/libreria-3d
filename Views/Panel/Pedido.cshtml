@@ -1,0 +1,61 @@
+@{
+    Pedido pedido = ViewBag.Pedido;
+    ViewData["Title"] = $"Pedido #{pedido.ID}";
+}
+
+<div class="container seccion">
+    <partial name="_PanelMenu" />
+    <div class="encabezado">
+        <div>
+            <h1 class="titulo">Pedido #@pedido.ID</h1>
+            <p class="texto-suave">@Vistas.Fecha(pedido.Fecha) · <span class="badge etiqueta @pedido.ClaseEstado">@pedido.Estado</span></p>
+        </div>
+        <a class="btn-outline theme-primary boton" asp-controller="Panel" asp-action="Pedidos">Volver a pedidos</a>
+    </div>
+
+    <div class="row g-4">
+        <div class="md:col-5">
+            <div class="tarjeta">
+                <h2 class="card-title">Cliente</h2>
+                <ul class="lista-datos">
+                    <li><strong>@pedido.Nombre</strong></li>
+                    <li><a href="mailto:@pedido.Email">@pedido.Email</a></li>
+                    @if (!string.IsNullOrEmpty(pedido.Telefono)) { <li>Teléfono: @pedido.Telefono</li> }
+                    @if (!string.IsNullOrEmpty(pedido.Direccion)) { <li>Envío: @pedido.Direccion</li> }
+                </ul>
+                @if (!string.IsNullOrEmpty(pedido.Notas))
+                {
+                    <p class="texto-con-saltos"><strong>Notas:</strong> @pedido.Notas</p>
+                }
+            </div>
+            <div class="tarjeta">
+                <h2 class="card-title">Estado</h2>
+                <form class="fila-formulario" asp-controller="Panel" asp-action="CambiarEstado" asp-route-id="@pedido.ID" method="post">
+                    <label class="visually-hidden" for="estado">Estado</label>
+                    <select class="form-control" id="estado" name="estado">
+                        @foreach (var estado in Pedido.Estados)
+                        {
+                            <option value="@estado" selected="@(pedido.Estado == estado)">@estado</option>
+                        }
+                    </select>
+                    <button class="btn-solid theme-primary boton" type="submit">Guardar</button>
+                </form>
+            </div>
+        </div>
+        <div class="md:col-7">
+            <div class="tarjeta">
+                <h2 class="card-title">Productos</h2>
+                <table class="table tabla">
+                    <thead><tr><th>Producto</th><th>Precio</th><th>Cantidad</th><th>Subtotal</th></tr></thead>
+                    <tbody>
+                        @foreach (var item in pedido.Items)
+                        {
+                            <tr><td>@item.Nombre</td><td>@Vistas.Precio(item.Precio_Unitario)</td><td>@item.Cantidad</td><td>@Vistas.Precio(item.Subtotal)</td></tr>
+                        }
+                    </tbody>
+                    <tfoot><tr><th colspan="3">Total</th><th>@Vistas.Precio(pedido.Total)</th></tr></tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,27 @@
+@{
+    ViewData["Title"] = "Cambiar contraseña";
+}
+
+<div class="container seccion angosto-chico">
+    <partial name="_PanelMenu" />
+    <h1 class="titulo">Cambiar contraseña</h1>
+
+    <form class="formulario tarjeta" asp-controller="Panel" asp-action="Contrasena" method="post">
+        <div class="form-field @Html.ClaseError("Actual")">
+            <label class="form-label" for="Actual">Contraseña actual</label>
+            <input class="form-control" id="Actual" name="Actual" type="password" autocomplete="current-password" required>
+            <p class="error-texto">@Html.MensajeError("Actual", "Ingresá tu contraseña actual")</p>
+        </div>
+        <div class="form-field @Html.ClaseError("Nueva")">
+            <label class="form-label" for="Nueva">Contraseña nueva</label>
+            <input class="form-control" id="Nueva" name="Nueva" type="password" autocomplete="new-password" minlength="8" required>
+            <p class="error-texto">@Html.MensajeError("Nueva", "Usá al menos 8 caracteres, con una letra y un número")</p>
+        </div>
+        <div class="form-field @Html.ClaseError("Repetir")">
+            <label class="form-label" for="Repetir">Repetí la contraseña nueva</label>
+            <input class="form-control" id="Repetir" name="Repetir" type="password" autocomplete="new-password" required>
+            <p class="error-texto">@Html.MensajeError("Repetir", "Las contraseñas no coinciden")</p>
+        </div>
+        <button class="btn-solid theme-primary boton w-100" type="submit">Cambiar contraseña</button>
+    </form>
+</div>

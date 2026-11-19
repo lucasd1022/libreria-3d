@@ -1,0 +1,28 @@
+@{
+    ViewData["Title"] = "Ingresar";
+    LoginViewModel datos = ViewBag.Formulario;
+    var hayError = Html.ErroresGenerales().Any();
+}
+
+<div class="container seccion angosto-chico">
+    <div class="tarjeta">
+        <h1 class="titulo">Panel de administración</h1>
+        <p class="texto-suave">Ingresá con tu cuenta de administrador.</p>
+
+        <partial name="_ErroresFormulario" />
+
+        <form class="formulario" asp-controller="Cuenta" asp-action="IniciarSesion" asp-route-ReturnUrl="@datos.ReturnUrl" method="post">
+            <div class="form-field @(hayError ? "" : Html.ClaseError("Email"))">
+                <label class="form-label" for="Email">Email</label>
+                <input class="form-control" id="Email" name="Email" value="@datos.Email" type="email" autocomplete="email" placeholder="tu@mail.com" required>
+                <p class="error-texto">@Html.MensajeError("Email", "Ingresá un email válido")</p>
+            </div>
+            <div class="form-field @(hayError ? "" : Html.ClaseError("Contrasena"))">
+                <label class="form-label" for="Contrasena">Contraseña</label>
+                <input class="form-control" id="Contrasena" name="Contrasena" type="password" value="" autocomplete="current-password" required>
+                <p class="error-texto">@Html.MensajeError("Contrasena", "Ingresá tu contraseña")</p>
+            </div>
+            <button class="btn-solid theme-primary boton w-100" type="submit">Ingresar</button>
+        </form>
+    </div>
+</div>

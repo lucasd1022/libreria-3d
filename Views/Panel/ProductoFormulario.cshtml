@@ -1,0 +1,64 @@
+@{
+    ProductoViewModel datos = ViewBag.Formulario;
+    int? id = ViewBag.IDProducto;
+    ViewData["Title"] = id == null ? "Nuevo producto" : "Editar producto";
+}
+
+<div class="container seccion angosto">
+    <partial name="_PanelMenu" />
+    <h1 class="titulo">@ViewData["Title"]</h1>
+
+    <partial name="_ErroresFormulario" />
+
+    <form class="formulario tarjeta" asp-controller="Panel" asp-action="@(id == null ? "NuevoProducto" : "EditarProducto")" asp-route-id="@id" method="post">
+        <div class="form-field @Html.ClaseError("Nombre")">
+            <label class="form-label" for="Nombre">Nombre</label>
+            <input class="form-control" id="Nombre" name="Nombre" value="@datos.Nombre" maxlength="120" required>
+            <p class="error-texto">@Html.MensajeError("Nombre", "Completá el nombre")</p>
+        </div>
+        <div class="form-field @Html.ClaseError("Descripcion")">
+            <label class="form-label" for="Descripcion">Descripción</label>
+            <textarea class="form-control" id="Descripcion" name="Descripcion" rows="4" maxlength="1000">@datos.Descripcion</textarea>
+            <p class="error-texto">@Html.MensajeError("Descripcion", "Usá hasta 1000 caracteres")</p>
+        </div>
+        <div class="row g-3">
+            <div class="col-6">
+                <div class="form-field @Html.ClaseError("Precio")">
+                    <label class="form-label" for="Precio">Precio (ARS)</label>
+                    <input class="form-control" id="Precio" name="Precio" value="@datos.Precio.ToString(System.Globalization.CultureInfo.InvariantCulture)" type="number" min="0" step="0.01" required>
+                    <p class="error-texto">@Html.MensajeError("Precio", "El precio tiene que ser 0 o más")</p>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-field @Html.ClaseError("Stock")">
+                    <label class="form-label" for="Stock">Stock</label>
+                    <input class="form-control" id="Stock" name="Stock" value="@datos.Stock" type="number" min="0" step="1" required>
+                    <p class="error-texto">@Html.MensajeError("Stock", "El stock tiene que ser 0 o más")</p>
+                </div>
+            </div>
+        </div>
+        <div class="form-field">
+            <label class="form-label" for="IDCategoria">Categoría</label>
+            <select class="form-control" id="IDCategoria" name="IDCategoria">
+                <option value="">Sin categoría</option>
+                @foreach (Categoria categoria in ViewBag.Categorias)
+                {
+                    <option value="@categoria.ID" selected="@(datos.IDCategoria == categoria.ID)">@categoria.Nombre</option>
+                }
+            </select>
+        </div>
+        <div class="form-field @Html.ClaseError("Imagen")">
+            <label class="form-label" for="Imagen">Imagen <span class="texto-suave">(opcional)</span></label>
+            <input class="form-control" id="Imagen" name="Imagen" value="@datos.Imagen" maxlength="260" placeholder="/img/productos/cuaderno.jpg">
+            <p class="error-texto">@Html.MensajeError("Imagen", "Revisá la ruta de la imagen")</p>
+        </div>
+        <label class="casilla">
+            <input id="Activo" name="Activo" value="true" checked="@datos.Activo" type="checkbox">
+            Visible en la tienda
+        </label>
+        <div class="acciones">
+            <a class="btn-outline theme-primary boton" asp-controller="Panel" asp-action="Productos">Cancelar</a>
+            <button class="btn-solid theme-primary boton" type="submit">Guardar</button>
+        </div>
+    </form>
+</div>

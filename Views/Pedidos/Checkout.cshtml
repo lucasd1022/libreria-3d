@@ -1,0 +1,57 @@
+@{
+    ViewData["Title"] = "Finalizar compra";
+    CheckoutViewModel datos = ViewBag.Formulario;
+    DetalleCarrito carrito = ViewBag.Carrito;
+}
+
+<div class="container seccion">
+    <h1 class="titulo">Finalizar compra</h1>
+    <p class="texto-suave">Dejanos tus datos y te escribimos para coordinar el pago y el envío.</p>
+
+    <div class="row g-5">
+        <div class="md:col-7">
+            <partial name="_ErroresFormulario" />
+            <form class="formulario" asp-controller="Pedidos" asp-action="Checkout" method="post">
+                <div class="form-field @Html.ClaseError("Nombre")">
+                    <label class="form-label" for="Nombre">Nombre y apellido</label>
+                    <input class="form-control" id="Nombre" name="Nombre" value="@datos.Nombre" autocomplete="name" maxlength="100" required>
+                    <p class="error-texto">@Html.MensajeError("Nombre", "Completá tu nombre y apellido")</p>
+                </div>
+                <div class="form-field @Html.ClaseError("Email")">
+                    <label class="form-label" for="Email">Email</label>
+                    <input class="form-control" id="Email" name="Email" value="@datos.Email" type="email" autocomplete="email" maxlength="100" placeholder="tu@mail.com" required>
+                    <p class="error-texto">@Html.MensajeError("Email", "Ingresá un email válido")</p>
+                </div>
+                <div class="form-field @Html.ClaseError("Telefono")">
+                    <label class="form-label" for="Telefono">Teléfono <span class="texto-suave">(opcional)</span></label>
+                    <input class="form-control" id="Telefono" name="Telefono" value="@datos.Telefono" type="tel" autocomplete="tel" maxlength="30">
+                    <p class="error-texto">@Html.MensajeError("Telefono", "Revisá el teléfono")</p>
+                </div>
+                <div class="form-field @Html.ClaseError("Direccion")">
+                    <label class="form-label" for="Direccion">Dirección de envío <span class="texto-suave">(opcional)</span></label>
+                    <input class="form-control" id="Direccion" name="Direccion" value="@datos.Direccion" autocomplete="street-address" maxlength="200">
+                    <p class="error-texto">@Html.MensajeError("Direccion", "Revisá la dirección")</p>
+                </div>
+                <div class="form-field @Html.ClaseError("Notas")">
+                    <label class="form-label" for="Notas">Notas <span class="texto-suave">(opcional)</span></label>
+                    <textarea class="form-control" id="Notas" name="Notas" rows="3" maxlength="500">@datos.Notas</textarea>
+                    <p class="error-texto">@Html.MensajeError("Notas", "Usá hasta 500 caracteres")</p>
+                </div>
+                <button class="btn-solid theme-primary boton w-100" type="submit">Confirmar pedido</button>
+            </form>
+        </div>
+        <div class="md:col-5">
+            <aside class="tarjeta">
+                <h2 class="card-title">Resumen</h2>
+                <ul class="lista-datos">
+                    @foreach (var linea in carrito.Lineas)
+                    {
+                        <li>@linea.Cantidad × @linea.Producto.Nombre <span class="derecha">@Vistas.Precio(linea.Subtotal)</span></li>
+                    }
+                </ul>
+                <p class="total">Total <span class="derecha">@Vistas.Precio(carrito.Total)</span></p>
+                <a asp-controller="Carrito" asp-action="Index">Modificar el carrito</a>
+            </aside>
+        </div>
+    </div>
+</div>

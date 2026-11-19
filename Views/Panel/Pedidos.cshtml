@@ -1,0 +1,49 @@
+@{
+    ViewData["Title"] = "Pedidos";
+    string? estadoActual = ViewBag.Estado;
+}
+
+<div class="container seccion">
+    <partial name="_PanelMenu" />
+    <div class="encabezado">
+        <h1 class="titulo">Pedidos</h1>
+    </div>
+
+    <div class="etiquetas filtros-estado">
+        <a class="badge etiqueta etiqueta-link @(estadoActual == null ? "etiqueta-principal" : "")" asp-controller="Panel" asp-action="Pedidos">Todos</a>
+        @foreach (var estado in Pedido.Estados)
+        {
+            <a class="badge etiqueta etiqueta-link @(estadoActual == estado ? "etiqueta-principal" : "")" asp-controller="Panel" asp-action="Pedidos" asp-route-estado="@estado">@estado</a>
+        }
+    </div>
+
+    @if (ViewBag.Pedidos.Count == 0)
+    {
+        <div class="vacio">
+            <h2>No hay pedidos @(estadoActual == null ? "todavía" : $"en estado \"{estadoActual}\"")</h2>
+        </div>
+    }
+    else
+    {
+        <div class="tabla-contenedor">
+            <table class="table tabla">
+                <thead>
+                    <tr><th>#</th><th>Fecha</th><th>Cliente</th><th>Productos</th><th>Total</th><th>Estado</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (Pedido pedido in ViewBag.Pedidos)
+                    {
+                        <tr>
+                            <td><a asp-controller="Panel" asp-action="Pedido" asp-route-id="@pedido.ID">#@pedido.ID</a></td>
+                            <td>@Vistas.Fecha(pedido.Fecha)</td>
+                            <td>@pedido.Nombre<br><span class="texto-suave">@pedido.Email</span></td>
+                            <td>@pedido.CantidadProductos</td>
+                            <td>@Vistas.Precio(pedido.Total)</td>
+                            <td><span class="badge etiqueta @pedido.ClaseEstado">@pedido.Estado</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
