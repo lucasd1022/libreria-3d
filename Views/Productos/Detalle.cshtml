@@ -12,15 +12,15 @@
         }
     </p>
 
-    <div class="columnas columnas-mitad">
+    <div class="grilla grilla-2">
         <div>
-            <div class="producto-imagen producto-imagen-grande">
+            <div class="marco-imagen marco-cuadrado">
                 <partial name="_ImagenProducto" model="producto" />
             </div>
         </div>
         <div>
             <h1 class="titulo">@producto.Nombre</h1>
-            <p class="precio precio-grande">@Vistas.Precio(producto.Precio)</p>
+            <p class="texto-destacado texto-enorme">@Vistas.Precio(producto.Precio)</p>
             @if (!string.IsNullOrEmpty(producto.Descripcion))
             {
                 <p class="texto-con-saltos">@producto.Descripcion</p>
@@ -29,16 +29,16 @@
             @if (producto.HayStock)
             {
                 <p class="texto-exito">Hay stock: @producto.Stock unidades</p>
-                <form class="fila-formulario" asp-controller="Carrito" asp-action="Agregar" asp-route-id="@producto.ID" asp-route-volver="@ViewContext.AquiMismo()" method="post">
+                <form class="fila" asp-controller="Carrito" asp-action="Agregar" asp-route-id="@producto.ID" asp-route-volver="@ViewContext.AquiMismo()" method="post">
                     <label class="solo-lectores" for="cantidad">Cantidad</label>
-                    <input class="campo campo-cantidad" id="cantidad" name="cantidad" type="number" value="1" min="1" max="@producto.Stock">
+                    <input class="campo campo-corto" id="cantidad" name="cantidad" type="number" value="1" min="1" max="@producto.Stock">
                     <button class="boton" type="submit">Agregar al carrito</button>
                 </form>
-                <p class="texto-suave nota-entrega">Retiralo sin cargo en @Tienda.DireccionCompleta@(Tienda.HaceEnvios ? $" o pedí envío a domicilio ({Tienda.TextoCostoEnvio})" : "").</p>
+                <p class="texto-suave espacio-arriba">Retiralo sin cargo en @Tienda.DireccionCompleta@(Tienda.HaceEnvios ? $" o pedí envío a domicilio ({Tienda.TextoCostoEnvio})" : "").</p>
             }
             else
             {
-                <p><span class="etiqueta etiqueta-error">Sin stock</span></p>
+                <p><span class="etiqueta etiqueta-roja">Sin stock</span></p>
             }
         </div>
     </div>

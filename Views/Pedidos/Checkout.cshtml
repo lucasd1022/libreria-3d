@@ -6,21 +6,21 @@
     var envio = Tienda.HaceEnvios && datos.EsEnvio;
 }
 
-<div class="contenedor seccion checkout">
+<div class="contenedor seccion conmutador">
     <h1 class="titulo">Finalizar compra</h1>
     <p class="texto-suave">Elegí cómo querés recibir tu pedido y dejanos tus datos. Te escribimos para coordinar el pago.</p>
 
-    <div class="columnas columnas-7-5">
+    <div class="grilla grilla-7-5">
         <div>
             <partial name="_ErroresFormulario" />
             <form class="formulario" asp-controller="Pedidos" asp-action="Checkout" method="post">
                 <fieldset class="fila-campo @Html.ClaseError("FormaEntrega")">
                     <legend class="campo-titulo">¿Cómo lo querés recibir?</legend>
-                    <div class="opciones-entrega">
-                        <label class="opcion-entrega">
-                            <input type="radio" id="entrega-retiro" name="FormaEntrega" value="@Pedido.EntregaRetiro" checked="@(!envio)">
-                            <span>
-                                <strong>Retiro en el local</strong> <span class="etiqueta etiqueta-exito">Gratis</span>
+                    <div class="grilla-auto">
+                        <label class="tarjeta-opcion">
+                            <input class="conmutador-a" type="radio" id="entrega-retiro" name="FormaEntrega" value="@Pedido.EntregaRetiro" checked="@(!envio)">
+                            <span class="pila">
+                                <strong>Retiro en el local</strong> <span class="etiqueta etiqueta-verde">Gratis</span>
                                 <span class="texto-suave">@Tienda.DireccionCompleta</span>
                                 @foreach (var horario in Tienda.Horarios)
                                 {
@@ -30,9 +30,9 @@
                         </label>
                         @if (Tienda.HaceEnvios)
                         {
-                            <label class="opcion-entrega">
-                                <input type="radio" id="entrega-envio" name="FormaEntrega" value="@Pedido.EntregaEnvio" checked="@envio">
-                                <span>
+                            <label class="tarjeta-opcion">
+                                <input class="conmutador-b" type="radio" id="entrega-envio" name="FormaEntrega" value="@Pedido.EntregaEnvio" checked="@envio">
+                                <span class="pila">
                                     <strong>Envío a domicilio</strong> <span class="etiqueta">@(costoEnvio == 0 ? "Gratis" : Vistas.Precio(costoEnvio))</span>
                                     @if (!string.IsNullOrEmpty(Tienda.ZonaEnvio))
                                     {
@@ -51,14 +51,14 @@
 
                 @if (Tienda.HaceEnvios)
                 {
-                    <div class="datos-envio">
+                    <div class="visible-con-b">
                         <h2 class="subtitulo-chico">Dirección de envío</h2>
                         <div class="fila-campo @Html.ClaseError("Direccion")">
                             <label class="campo-titulo" for="Direccion">Calle, número, piso y depto.</label>
                             <input class="campo" id="Direccion" name="Direccion" value="@datos.Direccion" autocomplete="street-address" maxlength="200">
                             <p class="error-texto">@Html.MensajeError("Direccion", "Completá la dirección de envío")</p>
                         </div>
-                        <div class="columnas columnas-mitad columnas-fijas">
+                        <div class="grilla grilla-2 grilla-siempre">
                             <div class="fila-campo @Html.ClaseError("Localidad")">
                                 <label class="campo-titulo" for="Localidad">Localidad</label>
                                 <input class="campo" id="Localidad" name="Localidad" value="@datos.Localidad" autocomplete="address-level2" maxlength="100">
@@ -79,7 +79,7 @@
                     <input class="campo" id="Nombre" name="Nombre" value="@datos.Nombre" autocomplete="name" maxlength="100" required>
                     <p class="error-texto">@Html.MensajeError("Nombre", "Completá tu nombre y apellido")</p>
                 </div>
-                <div class="columnas columnas-mitad">
+                <div class="grilla grilla-2">
                     <div class="fila-campo @Html.ClaseError("Email")">
                         <label class="campo-titulo" for="Email">Email</label>
                         <input class="campo" id="Email" name="Email" value="@datos.Email" type="email" autocomplete="email" maxlength="100" placeholder="tu@mail.com" required>
@@ -101,22 +101,22 @@
         </div>
         <aside class="tarjeta">
             <h2 class="tarjeta-subtitulo">Resumen</h2>
-            <ul class="lista-datos">
+            <ul class="lista-renglones">
                 @foreach (var linea in carrito.Lineas)
                 {
                     <li>@linea.Cantidad × @linea.Producto.Nombre <span class="derecha">@Vistas.Precio(linea.Subtotal)</span></li>
                 }
                 <li>Subtotal <span class="derecha">@Vistas.Precio(carrito.Total)</span></li>
-                <li class="solo-retiro">Retiro en el local <span class="derecha">Gratis</span></li>
+                <li class="visible-con-a">Retiro en el local <span class="derecha">Gratis</span></li>
                 @if (Tienda.HaceEnvios)
                 {
-                    <li class="solo-envio">Envío a domicilio <span class="derecha">@(costoEnvio == 0 ? "Gratis" : Vistas.Precio(costoEnvio))</span></li>
+                    <li class="visible-con-b">Envío a domicilio <span class="derecha">@(costoEnvio == 0 ? "Gratis" : Vistas.Precio(costoEnvio))</span></li>
                 }
             </ul>
-            <p class="total solo-retiro">Total <span class="derecha">@Vistas.Precio(carrito.Total)</span></p>
+            <p class="renglon-grande visible-con-a">Total <span class="derecha">@Vistas.Precio(carrito.Total)</span></p>
             @if (Tienda.HaceEnvios)
             {
-                <p class="total solo-envio">Total con envío <span class="derecha">@Vistas.Precio(carrito.Total + costoEnvio)</span></p>
+                <p class="renglon-grande visible-con-b">Total con envío <span class="derecha">@Vistas.Precio(carrito.Total + costoEnvio)</span></p>
             }
             <a asp-controller="Carrito" asp-action="Index">Modificar el carrito</a>
         </aside>

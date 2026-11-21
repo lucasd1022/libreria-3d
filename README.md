@@ -63,6 +63,15 @@
 | `CuentaController` | Iniciar y cerrar la sesión del administrador |
 | `PanelController` | Panel de administración: pedidos, productos y contraseña |
 
+### 🎨 Estilos
+
+Todo el diseño está en `wwwroot/css/style.css`, sin frameworks:
+
+- **Mobile first**: las reglas base son para celular y las media queries solo usan `min-width` (768px tablet, 1024px escritorio) para sumar lo que cambia en pantallas más grandes.
+- **Clases por diseño, no por contenido**: los nombres dicen cómo se ve o se acomoda algo (`tarjeta`, `grilla-2`, `banda-oscura`, `etiqueta-verde`, `fila-separada`), no qué muestra. Así la misma clase sirve para productos, pedidos o datos del local.
+- Los colores, radios y espacios están en variables al principio del archivo (`--color-principal`, `--radio`, etc.).
+- Lo que cambia según una opción (por ejemplo, la dirección y el total con envío) se muestra u oculta solo con CSS usando `.conmutador`, `.visible-con-a` y `.visible-con-b`.
+
 Toda la base se usa desde `Models/BD.cs`. Cada método llama a un stored procedure con Dapper:
 
 ```c#

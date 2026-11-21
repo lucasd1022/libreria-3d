@@ -8,6 +8,18 @@ public static class Vistas
 
     public static string Precio(decimal valor) => valor.ToString("C0", Cultura);
 
+    /// <summary>Color de la etiqueta de cada estado de pedido.</summary>
+    public static string ClaseEstado(string estado) => estado switch
+    {
+        Pedido.Pendiente => "etiqueta-amarilla",
+        Pedido.Pagado => "etiqueta-azul",
+        Pedido.ListoParaRetirar => "etiqueta-turquesa",
+        Pedido.Enviado => "etiqueta-violeta",
+        Pedido.Entregado => "etiqueta-verde",
+        Pedido.Cancelado => "etiqueta-roja",
+        _ => ""
+    };
+
     public static string Fecha(DateTime fecha) => fecha.ToString("dd/MM/yyyy HH:mm", Cultura);
 
     public static string? Actual(this ViewContext vista, string controlador) =>

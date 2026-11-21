@@ -4,8 +4,8 @@
     <partial name="_Head" />
 </head>
 <body>
-    <header class="menu-tienda">
-        <div class="contenedor menu-fila">
+    <header class="barra-superior">
+        <div class="contenedor fila-separada">
             <a class="logo" asp-controller="Home" asp-action="Index"><span class="logo-letra">L</span>@Tienda.Nombre</a>
             <nav class="menu" aria-label="Menú principal">
                 <a class="@ViewContext.ClaseLink("Productos")" aria-current="@ViewContext.Actual("Productos")" asp-controller="Productos" asp-action="Index">Productos</a>
@@ -14,12 +14,12 @@
                 {
                     var pendientes = ViewContext.PedidosPendientes();
                     <a class="@ViewContext.ClaseLink("Panel")" aria-current="@ViewContext.Actual("Panel")" asp-controller="Panel" asp-action="Pedidos">
-                        Panel @if (pendientes > 0) { <span class="contador">@pendientes</span> }
+                        Panel @if (pendientes > 0) { <span class="burbuja">@pendientes</span> }
                     </a>
                 }
                 @{ var enCarrito = ViewContext.CantidadCarrito(); }
                 <a class="boton boton-acento" asp-controller="Carrito" asp-action="Index">
-                    Carrito @if (enCarrito > 0) { <span class="contador">@enCarrito</span> }
+                    Carrito @if (enCarrito > 0) { <span class="burbuja">@enCarrito</span> }
                 </a>
             </nav>
         </div>
@@ -30,30 +30,30 @@
         @RenderBody()
     </main>
 
-    <footer>
+    <footer class="banda-oscura">
         <div class="contenedor">
-            <div class="columnas columnas-pie">
+            <div class="grilla grilla-2-1-1">
                 <div>
-                    <p class="logo logo-claro"><span class="logo-letra">L</span>@Tienda.Nombre</p>
+                    <p class="logo logo-invertido"><span class="logo-letra">L</span>@Tienda.Nombre</p>
                     <p>@Tienda.DireccionCompleta</p>
                     @foreach (var horario in Tienda.Horarios)
                     {
-                        <p class="pie-horario">@horario</p>
+                        <p class="texto-claro-chico">@horario</p>
                     }
                 </div>
-                <div>
-                    <h4>Tienda</h4>
+                <div class="pila">
+                    <h4 class="rotulo rotulo-acento">Tienda</h4>
                     <a asp-controller="Productos" asp-action="Index">Productos</a>
                     <a asp-controller="Carrito" asp-action="Index">Carrito</a>
                     <a asp-controller="Home" asp-action="Contacto">El local y contacto</a>
                 </div>
-                <div>
-                    <h4>Administración</h4>
+                <div class="pila">
+                    <h4 class="rotulo rotulo-acento">Administración</h4>
                     @if (User.EsAdministrador())
                     {
                         <a asp-controller="Panel" asp-action="Pedidos">Panel</a>
                         <form asp-controller="Cuenta" asp-action="CerrarSesion" method="post">
-                            <button class="boton-link boton-link-claro" type="submit">Cerrar sesión</button>
+                            <button class="boton-texto boton-texto-claro" type="submit">Cerrar sesión</button>
                         </form>
                     }
                     else
@@ -62,7 +62,7 @@
                     }
                 </div>
             </div>
-            <p class="copy">© @DateTime.Today.Year @Tienda.Nombre </p>
+            <p class="franja-inferior">© @DateTime.Today.Year @Tienda.Nombre </p>
         </div>
     </footer>
 

@@ -4,12 +4,12 @@
 
 <div class="contenedor seccion">
     <partial name="_PanelMenu" />
-    <div class="encabezado">
+    <div class="fila-separada">
         <h1 class="titulo">Productos</h1>
         <a class="boton" asp-controller="Panel" asp-action="NuevoProducto">Nuevo producto</a>
     </div>
 
-    <form class="buscador" asp-controller="Panel" asp-action="Productos" method="get">
+    <form class="formulario-en-linea" asp-controller="Panel" asp-action="Productos" method="get">
         <div class="fila-campo">
             <label class="campo-titulo" for="texto">Buscar</label>
             <input class="campo" id="texto" name="texto" type="search" value="@ViewBag.Texto">
@@ -19,7 +19,7 @@
 
     @if (ViewBag.Productos.Count == 0)
     {
-        <div class="vacio"><h2>No hay productos</h2></div>
+        <div class="recuadro-punteado"><h2>No hay productos</h2></div>
     }
     else
     {
@@ -36,12 +36,12 @@
                             <td>@(producto.Categoria ?? "—")</td>
                             <td>@Vistas.Precio(producto.Precio)</td>
                             <td class="@(producto.HayStock ? "" : "texto-error")">@producto.Stock</td>
-                            <td><span class="etiqueta @(producto.Activo ? "etiqueta-exito" : "")">@(producto.Activo ? "Visible" : "Oculto")</span></td>
+                            <td><span class="etiqueta @(producto.Activo ? "etiqueta-verde" : "")">@(producto.Activo ? "Visible" : "Oculto")</span></td>
                             <td>
-                                <div class="celda-acciones">
+                                <div class="fila">
                                 <a asp-controller="Panel" asp-action="EditarProducto" asp-route-id="@producto.ID">Editar</a>
-                                <details class="confirmar">
-                                    <summary class="boton-link boton-link-peligro">Eliminar</summary>
+                                <details class="desplegable">
+                                    <summary class="boton-texto boton-texto-peligro">Eliminar</summary>
                                     <form asp-controller="Panel" asp-action="EliminarProducto" asp-route-id="@producto.ID" method="post">
                                         <p>¿Eliminar "@producto.Nombre"? No se puede deshacer.</p>
                                         <button class="boton boton-peligro boton-chico" type="submit">Sí, eliminar</button>

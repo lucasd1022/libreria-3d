@@ -5,19 +5,19 @@
 
 <div class="contenedor seccion">
     <partial name="_PanelMenu" />
-    <div class="encabezado">
+    <div class="fila-separada">
         <div>
             <h1 class="titulo">Pedido #@pedido.ID</h1>
-            <p class="texto-suave">@Vistas.Fecha(pedido.Fecha) · <span class="etiqueta @pedido.ClaseEstado">@pedido.Estado</span></p>
+            <p class="texto-suave">@Vistas.Fecha(pedido.Fecha) · <span class="etiqueta @Vistas.ClaseEstado(pedido.Estado)">@pedido.Estado</span></p>
         </div>
         <a class="boton boton-borde" asp-controller="Panel" asp-action="Pedidos">Volver a pedidos</a>
     </div>
 
-    <div class="columnas columnas-5-7">
+    <div class="grilla grilla-5-7">
         <div>
             <div class="tarjeta">
                 <h2 class="tarjeta-subtitulo">Cliente</h2>
-                <ul class="lista-datos">
+                <ul class="lista-renglones">
                     <li><strong>@pedido.Nombre</strong></li>
                     <li><a href="mailto:@pedido.Email">@pedido.Email</a></li>
                     @if (!string.IsNullOrEmpty(pedido.Telefono)) { <li>Teléfono: <a href="tel:@pedido.Telefono.Replace(" ", "")">@pedido.Telefono</a></li> }
@@ -38,7 +38,7 @@
             </div>
             <div class="tarjeta">
                 <h2 class="tarjeta-subtitulo">Estado</h2>
-                <form class="fila-formulario" asp-controller="Panel" asp-action="CambiarEstado" asp-route-id="@pedido.ID" method="post">
+                <form class="fila" asp-controller="Panel" asp-action="CambiarEstado" asp-route-id="@pedido.ID" method="post">
                     <label class="solo-lectores" for="estado">Estado</label>
                     <select class="campo" id="estado" name="estado">
                         @foreach (var estado in Pedido.EstadosPara(pedido.Forma_Entrega))

@@ -4,7 +4,7 @@
     ViewData["Title"] = id == null ? "Nuevo producto" : "Editar producto";
 }
 
-<div class="contenedor seccion angosto">
+<div class="contenedor seccion contenedor-angosto">
     <partial name="_PanelMenu" />
     <h1 class="titulo">@ViewData["Title"]</h1>
 
@@ -21,7 +21,7 @@
             <textarea class="campo" id="Descripcion" name="Descripcion" rows="4" maxlength="1000">@datos.Descripcion</textarea>
             <p class="error-texto">@Html.MensajeError("Descripcion", "Usá hasta 1000 caracteres")</p>
         </div>
-        <div class="columnas columnas-mitad columnas-fijas">
+        <div class="grilla grilla-2 grilla-siempre">
             <div>
                 <div class="fila-campo @Html.ClaseError("Precio")">
                     <label class="campo-titulo" for="Precio">Precio (ARS)</label>
@@ -56,7 +56,7 @@
             <input id="Activo" name="Activo" value="true" checked="@datos.Activo" type="checkbox">
             Visible en la tienda
         </label>
-        <div class="acciones">
+        <div class="fila-final">
             <a class="boton boton-borde" asp-controller="Panel" asp-action="Productos">Cancelar</a>
             <button class="boton" type="submit">Guardar</button>
         </div>

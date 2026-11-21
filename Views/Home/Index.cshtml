@@ -2,32 +2,32 @@
     ViewData["Title"] = "";
 }
 
-<section class="portada">
+<section class="banda-oscura">
     <div class="contenedor">
-        <h1 class="titulo titulo-portada">Comprá online y retiralo en @Tienda.Nombre</h1>
+        <h1 class="titulo titulo-grande">Comprá online y retiralo en @Tienda.Nombre</h1>
         <p>@Tienda.Descripcion</p>
         <a class="boton boton-acento" asp-controller="Productos" asp-action="Index">Ver los productos</a>
     </div>
 </section>
 
-<section class="beneficios">
-    <div class="contenedor beneficios-grilla">
-        <div>
-            <strong>Retiro sin cargo</strong>
-            <span>En @Tienda.DireccionCompleta</span>
+<section class="banda-clara">
+    <div class="contenedor grilla-auto">
+        <div class="pila acento-lateral">
+            <strong class="texto-oscuro">Retiro sin cargo</strong>
+            <span class="texto-suave">En @Tienda.DireccionCompleta</span>
         </div>
         @if (Tienda.HaceEnvios)
         {
-            <div>
-                <strong>Envío a domicilio</strong>
-                <span>@(string.IsNullOrEmpty(Tienda.ZonaEnvio) ? "" : Tienda.ZonaEnvio + " · ")@Tienda.TextoCostoEnvio</span>
+            <div class="pila acento-lateral">
+                <strong class="texto-oscuro">Envío a domicilio</strong>
+                <span class="texto-suave">@(string.IsNullOrEmpty(Tienda.ZonaEnvio) ? "" : Tienda.ZonaEnvio + " · ")@Tienda.TextoCostoEnvio</span>
             </div>
         }
         @if (Tienda.Horarios.Length > 0)
         {
-            <div>
-                <strong>Horarios del local</strong>
-                <span>@string.Join(" · ", Tienda.Horarios)</span>
+            <div class="pila acento-lateral">
+                <strong class="texto-oscuro">Horarios del local</strong>
+                <span class="texto-suave">@string.Join(" · ", Tienda.Horarios)</span>
             </div>
         }
     </div>
@@ -35,24 +35,24 @@
 
 <div class="contenedor seccion">
     <h2 class="subtitulo">Categorías</h2>
-    <div class="etiquetas">
+    <div class="fila-envuelta">
         @foreach (Categoria categoria in ViewBag.Categorias)
         {
-            <a class="etiqueta etiqueta-link" asp-controller="Productos" asp-action="Index" asp-route-categoria="@categoria.ID">@categoria.Nombre (@categoria.CantidadProductos)</a>
+            <a class="etiqueta etiqueta-boton" asp-controller="Productos" asp-action="Index" asp-route-categoria="@categoria.ID">@categoria.Nombre (@categoria.CantidadProductos)</a>
         }
     </div>
 
     <h2 class="subtitulo">Lo último que llegó</h2>
     @if (ViewBag.Nuevos.Count == 0)
     {
-        <div class="vacio">
+        <div class="recuadro-punteado">
             <h3>Todavía no hay productos</h3>
             <p>Cargalos desde el panel de administración.</p>
         </div>
     }
     else
     {
-        <div class="grilla-productos">
+        <div class="grilla-tarjetas">
             @foreach (Producto producto in ViewBag.Nuevos)
             {
                 <partial name="_ProductoTarjeta" model="producto" />
@@ -62,7 +62,7 @@
 </div>
 
 <section class="contenedor seccion">
-    <div class="tarjeta visitanos">
+    <div class="tarjeta fila-separada">
         <div>
             <h2 class="subtitulo">Visitanos</h2>
             <partial name="_DatosLocal" />

@@ -41,7 +41,6 @@ public class Pedido
     public string TextoEntrega => EsEnvio ? "Envío a domicilio" : "Retiro en el local";
     public decimal Subtotal => Total - Costo_Envio;
     public string DireccionEnvio => string.Join(", ", new[] { Direccion, Localidad, Codigo_Postal is null ? null : $"CP {Codigo_Postal}" }.Where(t => !string.IsNullOrEmpty(t)));
-    public string ClaseEstado => "estado-" + Estado.ToLowerInvariant().Replace(' ', '-');
 }
 
 public class PedidoItem

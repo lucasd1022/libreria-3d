@@ -6,28 +6,28 @@
 
 <div class="contenedor seccion">
     <partial name="_PanelMenu" />
-    <div class="encabezado">
+    <div class="fila-separada">
         <h1 class="titulo">Pedidos</h1>
     </div>
 
-    <div class="filtros-pedidos">
-        <div class="etiquetas">
-            <a class="etiqueta etiqueta-link @(entregaActual == null ? "etiqueta-principal" : "")" asp-controller="Panel" asp-action="Pedidos" asp-route-estado="@estadoActual">Todas las entregas</a>
-            <a class="etiqueta etiqueta-link @(entregaActual == Pedido.EntregaRetiro ? "etiqueta-principal" : "")" asp-controller="Panel" asp-action="Pedidos" asp-route-estado="@estadoActual" asp-route-entrega="@Pedido.EntregaRetiro">Retiro en el local</a>
-            <a class="etiqueta etiqueta-link @(entregaActual == Pedido.EntregaEnvio ? "etiqueta-principal" : "")" asp-controller="Panel" asp-action="Pedidos" asp-route-estado="@estadoActual" asp-route-entrega="@Pedido.EntregaEnvio">Envío a domicilio</a>
+    <div class="pila">
+        <div class="fila-envuelta">
+            <a class="etiqueta etiqueta-boton @(entregaActual == null ? "etiqueta-activa" : "")" asp-controller="Panel" asp-action="Pedidos" asp-route-estado="@estadoActual">Todas las entregas</a>
+            <a class="etiqueta etiqueta-boton @(entregaActual == Pedido.EntregaRetiro ? "etiqueta-activa" : "")" asp-controller="Panel" asp-action="Pedidos" asp-route-estado="@estadoActual" asp-route-entrega="@Pedido.EntregaRetiro">Retiro en el local</a>
+            <a class="etiqueta etiqueta-boton @(entregaActual == Pedido.EntregaEnvio ? "etiqueta-activa" : "")" asp-controller="Panel" asp-action="Pedidos" asp-route-estado="@estadoActual" asp-route-entrega="@Pedido.EntregaEnvio">Envío a domicilio</a>
         </div>
-        <div class="etiquetas">
-            <a class="etiqueta etiqueta-link @(estadoActual == null ? "etiqueta-principal" : "")" asp-controller="Panel" asp-action="Pedidos" asp-route-entrega="@entregaActual">Todos los estados</a>
+        <div class="fila-envuelta">
+            <a class="etiqueta etiqueta-boton @(estadoActual == null ? "etiqueta-activa" : "")" asp-controller="Panel" asp-action="Pedidos" asp-route-entrega="@entregaActual">Todos los estados</a>
             @foreach (var estado in Pedido.Estados)
             {
-                <a class="etiqueta etiqueta-link @(estadoActual == estado ? "etiqueta-principal" : "")" asp-controller="Panel" asp-action="Pedidos" asp-route-estado="@estado" asp-route-entrega="@entregaActual">@estado</a>
+                <a class="etiqueta etiqueta-boton @(estadoActual == estado ? "etiqueta-activa" : "")" asp-controller="Panel" asp-action="Pedidos" asp-route-estado="@estado" asp-route-entrega="@entregaActual">@estado</a>
             }
         </div>
     </div>
 
     @if (ViewBag.Pedidos.Count == 0)
     {
-        <div class="vacio">
+        <div class="recuadro-punteado">
             <h2>No hay pedidos con esos filtros</h2>
         </div>
     }
@@ -48,7 +48,7 @@
                             <td>@pedido.TextoEntrega@if (pedido.EsEnvio) {<br><span class="texto-suave">@pedido.Localidad</span>}</td>
                             <td>@pedido.CantidadProductos</td>
                             <td>@Vistas.Precio(pedido.Total)</td>
-                            <td><span class="etiqueta @pedido.ClaseEstado">@pedido.Estado</span></td>
+                            <td><span class="etiqueta @Vistas.ClaseEstado(pedido.Estado)">@pedido.Estado</span></td>
                         </tr>
                     }
                 </tbody>

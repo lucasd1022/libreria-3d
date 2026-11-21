@@ -8,7 +8,7 @@
 
     @if (carrito.EstaVacio)
     {
-        <div class="vacio">
+        <div class="recuadro-punteado">
             <h2>Tu carrito está vacío</h2>
             <p>Buscá lo que necesitás en el catálogo y tocá "Agregar".</p>
             <a class="boton" asp-controller="Productos" asp-action="Index">Ver el catálogo</a>
@@ -28,16 +28,16 @@
                             <td><a asp-controller="Productos" asp-action="Detalle" asp-route-id="@linea.Producto.ID">@linea.Producto.Nombre</a></td>
                             <td>@Vistas.Precio(linea.Producto.Precio)</td>
                             <td>
-                                <form class="fila-formulario" asp-controller="Carrito" asp-action="Actualizar" asp-route-id="@linea.Producto.ID" method="post">
+                                <form class="fila" asp-controller="Carrito" asp-action="Actualizar" asp-route-id="@linea.Producto.ID" method="post">
                                     <label class="solo-lectores" for="cantidad-@linea.Producto.ID">Cantidad de @linea.Producto.Nombre</label>
-                                    <input class="campo campo-cantidad" id="cantidad-@linea.Producto.ID" name="cantidad" type="number" value="@linea.Cantidad" min="0" max="@linea.Producto.Stock">
-                                    <button class="boton-link" type="submit">Actualizar</button>
+                                    <input class="campo campo-corto" id="cantidad-@linea.Producto.ID" name="cantidad" type="number" value="@linea.Cantidad" min="0" max="@linea.Producto.Stock">
+                                    <button class="boton-texto" type="submit">Actualizar</button>
                                 </form>
                             </td>
                             <td>@Vistas.Precio(linea.Subtotal)</td>
                             <td>
                                 <form asp-controller="Carrito" asp-action="Quitar" asp-route-id="@linea.Producto.ID" method="post">
-                                    <button class="boton-link boton-link-peligro" type="submit">Quitar</button>
+                                    <button class="boton-texto boton-texto-peligro" type="submit">Quitar</button>
                                 </form>
                             </td>
                         </tr>
@@ -49,9 +49,9 @@
             </table>
         </div>
 
-        <p class="texto-suave nota-entrega">En el próximo paso elegís si lo retirás sin cargo en el local@(Tienda.HaceEnvios ? " o te lo enviamos" : "").</p>
+        <p class="texto-suave espacio-arriba">En el próximo paso elegís si lo retirás sin cargo en el local@(Tienda.HaceEnvios ? " o te lo enviamos" : "").</p>
 
-        <div class="acciones">
+        <div class="fila-final">
             <a class="boton boton-borde" asp-controller="Productos" asp-action="Index">Seguir comprando</a>
             <a class="boton" asp-controller="Pedidos" asp-action="Checkout">Finalizar compra</a>
         </div>
