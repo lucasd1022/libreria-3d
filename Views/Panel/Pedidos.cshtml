@@ -1,6 +1,7 @@
 @{
     ViewData["Title"] = "Pedidos";
     string? estadoActual = ViewBag.Estado;
+    string? entregaActual = ViewBag.Entrega;
 }
 
 <div class="contenedor seccion">
@@ -9,18 +10,25 @@
         <h1 class="titulo">Pedidos</h1>
     </div>
 
-    <div class="etiquetas filtros-estado">
-        <a class="etiqueta etiqueta-link @(estadoActual == null ? "etiqueta-principal" : "")" asp-controller="Panel" asp-action="Pedidos">Todos</a>
-        @foreach (var estado in Pedido.Estados)
-        {
-            <a class="etiqueta etiqueta-link @(estadoActual == estado ? "etiqueta-principal" : "")" asp-controller="Panel" asp-action="Pedidos" asp-route-estado="@estado">@estado</a>
-        }
+    <div class="filtros-pedidos">
+        <div class="etiquetas">
+            <a class="etiqueta etiqueta-link @(entregaActual == null ? "etiqueta-principal" : "")" asp-controller="Panel" asp-action="Pedidos" asp-route-estado="@estadoActual">Todas las entregas</a>
+            <a class="etiqueta etiqueta-link @(entregaActual == Pedido.EntregaRetiro ? "etiqueta-principal" : "")" asp-controller="Panel" asp-action="Pedidos" asp-route-estado="@estadoActual" asp-route-entrega="@Pedido.EntregaRetiro">Retiro en el local</a>
+            <a class="etiqueta etiqueta-link @(entregaActual == Pedido.EntregaEnvio ? "etiqueta-principal" : "")" asp-controller="Panel" asp-action="Pedidos" asp-route-estado="@estadoActual" asp-route-entrega="@Pedido.EntregaEnvio">Envío a domicilio</a>
+        </div>
+        <div class="etiquetas">
+            <a class="etiqueta etiqueta-link @(estadoActual == null ? "etiqueta-principal" : "")" asp-controller="Panel" asp-action="Pedidos" asp-route-entrega="@entregaActual">Todos los estados</a>
+            @foreach (var estado in Pedido.Estados)
+            {
+                <a class="etiqueta etiqueta-link @(estadoActual == estado ? "etiqueta-principal" : "")" asp-controller="Panel" asp-action="Pedidos" asp-route-estado="@estado" asp-route-entrega="@entregaActual">@estado</a>
+            }
+        </div>
     </div>
 
     @if (ViewBag.Pedidos.Count == 0)
     {
         <div class="vacio">
-            <h2>No hay pedidos @(estadoActual == null ? "todavía" : $"en estado \"{estadoActual}\"")</h2>
+            <h2>No hay pedidos con esos filtros</h2>
         </div>
     }
     else
@@ -28,7 +36,7 @@
         <div class="tabla-contenedor">
             <table class="tabla">
                 <thead>
-                    <tr><th>#</th><th>Fecha</th><th>Cliente</th><th>Productos</th><th>Total</th><th>Estado</th></tr>
+                    <tr><th>#</th><th>Fecha</th><th>Cliente</th><th>Entrega</th><th>Productos</th><th>Total</th><th>Estado</th></tr>
                 </thead>
                 <tbody>
                     @foreach (Pedido pedido in ViewBag.Pedidos)
@@ -36,7 +44,8 @@
                         <tr>
                             <td><a asp-controller="Panel" asp-action="Pedido" asp-route-id="@pedido.ID">#@pedido.ID</a></td>
                             <td>@Vistas.Fecha(pedido.Fecha)</td>
-                            <td>@pedido.Nombre<br><span class="texto-suave">@pedido.Email</span></td>
+                            <td>@pedido.Nombre<br><span class="texto-suave">@pedido.Telefono</span></td>
+                            <td>@pedido.TextoEntrega@if (pedido.EsEnvio) {<br><span class="texto-suave">@pedido.Localidad</span>}</td>
                             <td>@pedido.CantidadProductos</td>
                             <td>@Vistas.Precio(pedido.Total)</td>
                             <td><span class="etiqueta @pedido.ClaseEstado">@pedido.Estado</span></td>

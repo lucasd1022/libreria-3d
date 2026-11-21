@@ -158,13 +158,16 @@ CREATE OR ALTER PROCEDURE CrearPedido
     @Nombre NVARCHAR(100),
     @Email NVARCHAR(100),
     @Telefono NVARCHAR(30) = NULL,
+    @Forma_Entrega NVARCHAR(10),
     @Direccion NVARCHAR(200) = NULL,
+    @Localidad NVARCHAR(100) = NULL,
+    @Codigo_Postal NVARCHAR(10) = NULL,
     @Notas NVARCHAR(500) = NULL
 AS
 BEGIN
     SET NOCOUNT ON
-    INSERT INTO Pedido (Nombre, Email, Telefono, Direccion, Notas)
-    VALUES (@Nombre, @Email, @Telefono, @Direccion, @Notas)
+    INSERT INTO Pedido (Nombre, Email, Telefono, Forma_Entrega, Direccion, Localidad, Codigo_Postal, Notas)
+    VALUES (@Nombre, @Email, @Telefono, @Forma_Entrega, @Direccion, @Localidad, @Codigo_Postal, @Notas)
 
     SELECT CAST(SCOPE_IDENTITY() AS INT) AS ID
 END
@@ -199,24 +202,39 @@ BEGIN
 END
 GO
 
+-- Suma los productos y, si es con envío, el costo de envío (gratis si el subtotal llega a @EnvioGratisDesde).
 CREATE OR ALTER PROCEDURE CalcularTotalPedido
-    @IDPedido INT
+    @IDPedido INT,
+    @CostoEnvio DECIMAL(12, 2),
+    @EnvioGratisDesde DECIMAL(12, 2) = NULL
 AS
 BEGIN
+    DECLARE @Subtotal DECIMAL(12, 2) = ISNULL((SELECT SUM(Precio_Unitario * Cantidad) FROM PedidoItem WHERE IDPedido = @IDPedido), 0)
+
     UPDATE Pedido
-    SET Total = ISNULL((SELECT SUM(Precio_Unitario * Cantidad) FROM PedidoItem WHERE IDPedido = @IDPedido), 0)
+    SET Costo_Envio = CASE
+            WHEN Forma_Entrega = N'Envio' AND (@EnvioGratisDesde IS NULL OR @Subtotal < @EnvioGratisDesde) THEN @CostoEnvio
+            ELSE 0
+        END
+    WHERE ID = @IDPedido
+
+    UPDATE Pedido
+    SET Total = @Subtotal + Costo_Envio
     WHERE ID = @IDPedido
 END
 GO
 
 CREATE OR ALTER PROCEDURE ObtenerPedidos
-    @Estado NVARCHAR(20) = NULL
+    @Estado NVARCHAR(20) = NULL,
+    @Forma_Entrega NVARCHAR(10) = NULL
 AS
 BEGIN
-    SELECT p.ID, p.Nombre, p.Email, p.Telefono, p.Direccion, p.Notas, p.Total, p.Estado, p.Fecha,
+    SELECT p.ID, p.Nombre, p.Email, p.Telefono, p.Forma_Entrega, p.Direccion, p.Localidad, p.Codigo_Postal, p.Notas,
+           p.Costo_Envio, p.Total, p.Estado, p.Fecha,
            ISNULL((SELECT SUM(i.Cantidad) FROM PedidoItem i WHERE i.IDPedido = p.ID), 0) AS CantidadProductos
     FROM Pedido p
-    WHERE @Estado IS NULL OR p.Estado = @Estado
+    WHERE (@Estado IS NULL OR p.Estado = @Estado)
+      AND (@Forma_Entrega IS NULL OR p.Forma_Entrega = @Forma_Entrega)
     ORDER BY p.Fecha DESC, p.ID DESC
 END
 GO
@@ -225,7 +243,8 @@ CREATE OR ALTER PROCEDURE ObtenerPedidoPorId
     @ID INT
 AS
 BEGIN
-    SELECT p.ID, p.Nombre, p.Email, p.Telefono, p.Direccion, p.Notas, p.Total, p.Estado, p.Fecha,
+    SELECT p.ID, p.Nombre, p.Email, p.Telefono, p.Forma_Entrega, p.Direccion, p.Localidad, p.Codigo_Postal, p.Notas,
+           p.Costo_Envio, p.Total, p.Estado, p.Fecha,
            ISNULL((SELECT SUM(i.Cantidad) FROM PedidoItem i WHERE i.IDPedido = p.ID), 0) AS CantidadProductos
     FROM Pedido p
     WHERE p.ID = @ID

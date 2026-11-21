@@ -7,13 +7,37 @@
     <div class="tarjeta">
         <h1 class="titulo">¡Gracias, @pedido.Nombre!</h1>
         <p>Recibimos tu pedido <strong>#@pedido.ID</strong> por un total de <strong>@Vistas.Precio(pedido.Total)</strong>.</p>
-        <p>Te vamos a escribir a <strong>@pedido.Email</strong> para coordinar el pago y el envío.</p>
+        <p>Te vamos a escribir a <strong>@pedido.Email</strong> o al <strong>@pedido.Telefono</strong> para coordinar el pago.</p>
+
+        <div class="aviso-entrega">
+            @if (pedido.EsEnvio)
+            {
+                <h2 class="subtitulo-chico">Envío a domicilio</h2>
+                <p>Lo enviamos a <strong>@pedido.DireccionEnvio</strong>. Te avisamos cuando salga.</p>
+            }
+            else
+            {
+                <h2 class="subtitulo-chico">Retiro en el local</h2>
+                <p>Te avisamos cuando esté listo para retirar en <strong>@Tienda.DireccionCompleta</strong>.</p>
+                @if (Tienda.Horarios.Length > 0)
+                {
+                    <p class="texto-suave">@string.Join(" · ", Tienda.Horarios)</p>
+                }
+                <a href="@Tienda.LinkMapa" target="_blank" rel="noopener">Cómo llegar</a>
+            }
+        </div>
+
         <ul class="lista-datos">
             @foreach (var item in pedido.Items)
             {
                 <li>@item.Cantidad × @item.Nombre <span class="derecha">@Vistas.Precio(item.Subtotal)</span></li>
             }
+            @if (pedido.EsEnvio)
+            {
+                <li>Envío <span class="derecha">@(pedido.Costo_Envio == 0 ? "Gratis" : Vistas.Precio(pedido.Costo_Envio))</span></li>
+            }
         </ul>
-        <a class="boton" asp-controller="Productos" asp-action="Index">Volver al catálogo</a>
+        <p class="total">Total <span class="derecha">@Vistas.Precio(pedido.Total)</span></p>
+        <a class="boton" asp-controller="Productos" asp-action="Index">Seguir mirando productos</a>
     </div>
 </div>

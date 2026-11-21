@@ -20,9 +20,17 @@
                 <ul class="lista-datos">
                     <li><strong>@pedido.Nombre</strong></li>
                     <li><a href="mailto:@pedido.Email">@pedido.Email</a></li>
-                    @if (!string.IsNullOrEmpty(pedido.Telefono)) { <li>Teléfono: @pedido.Telefono</li> }
-                    @if (!string.IsNullOrEmpty(pedido.Direccion)) { <li>Envío: @pedido.Direccion</li> }
+                    @if (!string.IsNullOrEmpty(pedido.Telefono)) { <li>Teléfono: <a href="tel:@pedido.Telefono.Replace(" ", "")">@pedido.Telefono</a></li> }
                 </ul>
+                <h2 class="tarjeta-subtitulo">@pedido.TextoEntrega</h2>
+                @if (pedido.EsEnvio)
+                {
+                    <p>@pedido.DireccionEnvio</p>
+                }
+                else
+                {
+                    <p class="texto-suave">Lo retira en el local. Pasalo a "@Pedido.ListoParaRetirar" cuando esté preparado.</p>
+                }
                 @if (!string.IsNullOrEmpty(pedido.Notas))
                 {
                     <p class="texto-con-saltos"><strong>Notas:</strong> @pedido.Notas</p>
@@ -33,7 +41,7 @@
                 <form class="fila-formulario" asp-controller="Panel" asp-action="CambiarEstado" asp-route-id="@pedido.ID" method="post">
                     <label class="solo-lectores" for="estado">Estado</label>
                     <select class="campo" id="estado" name="estado">
-                        @foreach (var estado in Pedido.Estados)
+                        @foreach (var estado in Pedido.EstadosPara(pedido.Forma_Entrega))
                         {
                             <option value="@estado" selected="@(pedido.Estado == estado)">@estado</option>
                         }
@@ -53,7 +61,14 @@
                             <tr><td>@item.Nombre</td><td>@Vistas.Precio(item.Precio_Unitario)</td><td>@item.Cantidad</td><td>@Vistas.Precio(item.Subtotal)</td></tr>
                         }
                     </tbody>
-                    <tfoot><tr><th colspan="3">Total</th><th>@Vistas.Precio(pedido.Total)</th></tr></tfoot>
+                    <tfoot>
+                        @if (pedido.EsEnvio)
+                        {
+                            <tr><td colspan="3">Subtotal</td><td>@Vistas.Precio(pedido.Subtotal)</td></tr>
+                            <tr><td colspan="3">Envío</td><td>@(pedido.Costo_Envio == 0 ? "Gratis" : Vistas.Precio(pedido.Costo_Envio))</td></tr>
+                        }
+                        <tr><th colspan="3">Total</th><th>@Vistas.Precio(pedido.Total)</th></tr>
+                    </tfoot>
                 </table>
             </div>
         </div>

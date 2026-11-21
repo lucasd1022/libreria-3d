@@ -2,56 +2,123 @@
     ViewData["Title"] = "Finalizar compra";
     CheckoutViewModel datos = ViewBag.Formulario;
     DetalleCarrito carrito = ViewBag.Carrito;
+    var costoEnvio = Tienda.CostoEnvioPara(carrito.Total);
+    var envio = Tienda.HaceEnvios && datos.EsEnvio;
 }
 
-<div class="contenedor seccion">
+<div class="contenedor seccion checkout">
     <h1 class="titulo">Finalizar compra</h1>
-    <p class="texto-suave">Dejanos tus datos y te escribimos para coordinar el pago y el envío.</p>
+    <p class="texto-suave">Elegí cómo querés recibir tu pedido y dejanos tus datos. Te escribimos para coordinar el pago.</p>
 
     <div class="columnas columnas-7-5">
         <div>
             <partial name="_ErroresFormulario" />
             <form class="formulario" asp-controller="Pedidos" asp-action="Checkout" method="post">
+                <fieldset class="fila-campo @Html.ClaseError("FormaEntrega")">
+                    <legend class="campo-titulo">¿Cómo lo querés recibir?</legend>
+                    <div class="opciones-entrega">
+                        <label class="opcion-entrega">
+                            <input type="radio" id="entrega-retiro" name="FormaEntrega" value="@Pedido.EntregaRetiro" checked="@(!envio)">
+                            <span>
+                                <strong>Retiro en el local</strong> <span class="etiqueta etiqueta-exito">Gratis</span>
+                                <span class="texto-suave">@Tienda.DireccionCompleta</span>
+                                @foreach (var horario in Tienda.Horarios)
+                                {
+                                    <span class="texto-suave">@horario</span>
+                                }
+                            </span>
+                        </label>
+                        @if (Tienda.HaceEnvios)
+                        {
+                            <label class="opcion-entrega">
+                                <input type="radio" id="entrega-envio" name="FormaEntrega" value="@Pedido.EntregaEnvio" checked="@envio">
+                                <span>
+                                    <strong>Envío a domicilio</strong> <span class="etiqueta">@(costoEnvio == 0 ? "Gratis" : Vistas.Precio(costoEnvio))</span>
+                                    @if (!string.IsNullOrEmpty(Tienda.ZonaEnvio))
+                                    {
+                                        <span class="texto-suave">Enviamos a @Tienda.ZonaEnvio</span>
+                                    }
+                                    @if (Tienda.EnvioGratisDesde.HasValue && costoEnvio > 0)
+                                    {
+                                        <span class="texto-suave">Gratis en compras desde @Vistas.Precio(Tienda.EnvioGratisDesde.Value)</span>
+                                    }
+                                </span>
+                            </label>
+                        }
+                    </div>
+                    <p class="error-texto">@Html.MensajeError("FormaEntrega", "Elegí cómo querés recibir tu pedido")</p>
+                </fieldset>
+
+                @if (Tienda.HaceEnvios)
+                {
+                    <div class="datos-envio">
+                        <h2 class="subtitulo-chico">Dirección de envío</h2>
+                        <div class="fila-campo @Html.ClaseError("Direccion")">
+                            <label class="campo-titulo" for="Direccion">Calle, número, piso y depto.</label>
+                            <input class="campo" id="Direccion" name="Direccion" value="@datos.Direccion" autocomplete="street-address" maxlength="200">
+                            <p class="error-texto">@Html.MensajeError("Direccion", "Completá la dirección de envío")</p>
+                        </div>
+                        <div class="columnas columnas-mitad columnas-fijas">
+                            <div class="fila-campo @Html.ClaseError("Localidad")">
+                                <label class="campo-titulo" for="Localidad">Localidad</label>
+                                <input class="campo" id="Localidad" name="Localidad" value="@datos.Localidad" autocomplete="address-level2" maxlength="100">
+                                <p class="error-texto">@Html.MensajeError("Localidad", "Completá la localidad")</p>
+                            </div>
+                            <div class="fila-campo @Html.ClaseError("CodigoPostal")">
+                                <label class="campo-titulo" for="CodigoPostal">Código postal <span class="texto-suave">(opcional)</span></label>
+                                <input class="campo" id="CodigoPostal" name="CodigoPostal" value="@datos.CodigoPostal" autocomplete="postal-code" maxlength="10">
+                                <p class="error-texto">@Html.MensajeError("CodigoPostal", "Revisá el código postal")</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <h2 class="subtitulo-chico">Tus datos</h2>
                 <div class="fila-campo @Html.ClaseError("Nombre")">
                     <label class="campo-titulo" for="Nombre">Nombre y apellido</label>
                     <input class="campo" id="Nombre" name="Nombre" value="@datos.Nombre" autocomplete="name" maxlength="100" required>
                     <p class="error-texto">@Html.MensajeError("Nombre", "Completá tu nombre y apellido")</p>
                 </div>
-                <div class="fila-campo @Html.ClaseError("Email")">
-                    <label class="campo-titulo" for="Email">Email</label>
-                    <input class="campo" id="Email" name="Email" value="@datos.Email" type="email" autocomplete="email" maxlength="100" placeholder="tu@mail.com" required>
-                    <p class="error-texto">@Html.MensajeError("Email", "Ingresá un email válido")</p>
-                </div>
-                <div class="fila-campo @Html.ClaseError("Telefono")">
-                    <label class="campo-titulo" for="Telefono">Teléfono <span class="texto-suave">(opcional)</span></label>
-                    <input class="campo" id="Telefono" name="Telefono" value="@datos.Telefono" type="tel" autocomplete="tel" maxlength="30">
-                    <p class="error-texto">@Html.MensajeError("Telefono", "Revisá el teléfono")</p>
-                </div>
-                <div class="fila-campo @Html.ClaseError("Direccion")">
-                    <label class="campo-titulo" for="Direccion">Dirección de envío <span class="texto-suave">(opcional)</span></label>
-                    <input class="campo" id="Direccion" name="Direccion" value="@datos.Direccion" autocomplete="street-address" maxlength="200">
-                    <p class="error-texto">@Html.MensajeError("Direccion", "Revisá la dirección")</p>
+                <div class="columnas columnas-mitad">
+                    <div class="fila-campo @Html.ClaseError("Email")">
+                        <label class="campo-titulo" for="Email">Email</label>
+                        <input class="campo" id="Email" name="Email" value="@datos.Email" type="email" autocomplete="email" maxlength="100" placeholder="tu@mail.com" required>
+                        <p class="error-texto">@Html.MensajeError("Email", "Ingresá un email válido")</p>
+                    </div>
+                    <div class="fila-campo @Html.ClaseError("Telefono")">
+                        <label class="campo-titulo" for="Telefono">Teléfono</label>
+                        <input class="campo" id="Telefono" name="Telefono" value="@datos.Telefono" type="tel" autocomplete="tel" maxlength="30" required>
+                        <p class="error-texto">@Html.MensajeError("Telefono", "Ingresá un teléfono para avisarte")</p>
+                    </div>
                 </div>
                 <div class="fila-campo @Html.ClaseError("Notas")">
                     <label class="campo-titulo" for="Notas">Notas <span class="texto-suave">(opcional)</span></label>
-                    <textarea class="campo" id="Notas" name="Notas" rows="3" maxlength="500">@datos.Notas</textarea>
+                    <textarea class="campo" id="Notas" name="Notas" rows="3" maxlength="500" placeholder="Por ejemplo: quién retira, horario para recibir el envío…">@datos.Notas</textarea>
                     <p class="error-texto">@Html.MensajeError("Notas", "Usá hasta 500 caracteres")</p>
                 </div>
                 <button class="boton boton-ancho" type="submit">Confirmar pedido</button>
             </form>
         </div>
-        <div>
-            <aside class="tarjeta">
-                <h2 class="tarjeta-subtitulo">Resumen</h2>
-                <ul class="lista-datos">
-                    @foreach (var linea in carrito.Lineas)
-                    {
-                        <li>@linea.Cantidad × @linea.Producto.Nombre <span class="derecha">@Vistas.Precio(linea.Subtotal)</span></li>
-                    }
-                </ul>
-                <p class="total">Total <span class="derecha">@Vistas.Precio(carrito.Total)</span></p>
-                <a asp-controller="Carrito" asp-action="Index">Modificar el carrito</a>
-            </aside>
-        </div>
+        <aside class="tarjeta">
+            <h2 class="tarjeta-subtitulo">Resumen</h2>
+            <ul class="lista-datos">
+                @foreach (var linea in carrito.Lineas)
+                {
+                    <li>@linea.Cantidad × @linea.Producto.Nombre <span class="derecha">@Vistas.Precio(linea.Subtotal)</span></li>
+                }
+                <li>Subtotal <span class="derecha">@Vistas.Precio(carrito.Total)</span></li>
+                <li class="solo-retiro">Retiro en el local <span class="derecha">Gratis</span></li>
+                @if (Tienda.HaceEnvios)
+                {
+                    <li class="solo-envio">Envío a domicilio <span class="derecha">@(costoEnvio == 0 ? "Gratis" : Vistas.Precio(costoEnvio))</span></li>
+                }
+            </ul>
+            <p class="total solo-retiro">Total <span class="derecha">@Vistas.Precio(carrito.Total)</span></p>
+            @if (Tienda.HaceEnvios)
+            {
+                <p class="total solo-envio">Total con envío <span class="derecha">@Vistas.Precio(carrito.Total + costoEnvio)</span></p>
+            }
+            <a asp-controller="Carrito" asp-action="Index">Modificar el carrito</a>
+        </aside>
     </div>
 </div>

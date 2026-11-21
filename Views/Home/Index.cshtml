@@ -4,9 +4,32 @@
 
 <section class="portada">
     <div class="contenedor">
-        <h1 class="titulo titulo-portada">Todo para estudiar, crear y organizarte</h1>
-        <p>Cuadernos, útiles escolares, arte y oficina. Enviamos a todo el país.</p>
-        <a class="boton boton-acento" asp-controller="Productos" asp-action="Index">Ver el catálogo</a>
+        <h1 class="titulo titulo-portada">Comprá online y retiralo en @Tienda.Nombre</h1>
+        <p>@Tienda.Descripcion</p>
+        <a class="boton boton-acento" asp-controller="Productos" asp-action="Index">Ver los productos</a>
+    </div>
+</section>
+
+<section class="beneficios">
+    <div class="contenedor beneficios-grilla">
+        <div>
+            <strong>Retiro sin cargo</strong>
+            <span>En @Tienda.DireccionCompleta</span>
+        </div>
+        @if (Tienda.HaceEnvios)
+        {
+            <div>
+                <strong>Envío a domicilio</strong>
+                <span>@(string.IsNullOrEmpty(Tienda.ZonaEnvio) ? "" : Tienda.ZonaEnvio + " · ")@Tienda.TextoCostoEnvio</span>
+            </div>
+        }
+        @if (Tienda.Horarios.Length > 0)
+        {
+            <div>
+                <strong>Horarios del local</strong>
+                <span>@string.Join(" · ", Tienda.Horarios)</span>
+            </div>
+        }
     </div>
 </section>
 
@@ -19,7 +42,7 @@
         }
     </div>
 
-    <h2 class="subtitulo">Novedades</h2>
+    <h2 class="subtitulo">Lo último que llegó</h2>
     @if (ViewBag.Nuevos.Count == 0)
     {
         <div class="vacio">
@@ -37,3 +60,13 @@
         </div>
     }
 </div>
+
+<section class="contenedor seccion">
+    <div class="tarjeta visitanos">
+        <div>
+            <h2 class="subtitulo">Visitanos</h2>
+            <partial name="_DatosLocal" />
+        </div>
+        <a class="boton boton-borde" asp-controller="Home" asp-action="Contacto">Ver el mapa</a>
+    </div>
+</section>

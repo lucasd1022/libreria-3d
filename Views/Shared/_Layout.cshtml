@@ -8,8 +8,8 @@
         <div class="contenedor menu-fila">
             <a class="logo" asp-controller="Home" asp-action="Index"><span class="logo-letra">L</span>@Tienda.Nombre</a>
             <nav class="menu" aria-label="Menú principal">
-                <a class="@ViewContext.ClaseLink("Productos")" aria-current="@ViewContext.Actual("Productos")" asp-controller="Productos" asp-action="Index">Catálogo</a>
-                <a class="@ViewContext.ClaseLink("Home", "Contacto")" aria-current="@ViewContext.ActualAccion("Home", "Contacto")" asp-controller="Home" asp-action="Contacto">Contacto</a>
+                <a class="@ViewContext.ClaseLink("Productos")" aria-current="@ViewContext.Actual("Productos")" asp-controller="Productos" asp-action="Index">Productos</a>
+                <a class="@ViewContext.ClaseLink("Home", "Contacto")" aria-current="@ViewContext.ActualAccion("Home", "Contacto")" asp-controller="Home" asp-action="Contacto">El local</a>
                 @if (User.EsAdministrador())
                 {
                     var pendientes = ViewContext.PedidosPendientes();
@@ -35,13 +35,17 @@
             <div class="columnas columnas-pie">
                 <div>
                     <p class="logo logo-claro"><span class="logo-letra">L</span>@Tienda.Nombre</p>
-                    <p>Todo para estudiar, crear y organizarte.</p>
+                    <p>@Tienda.DireccionCompleta</p>
+                    @foreach (var horario in Tienda.Horarios)
+                    {
+                        <p class="pie-horario">@horario</p>
+                    }
                 </div>
                 <div>
                     <h4>Tienda</h4>
-                    <a asp-controller="Productos" asp-action="Index">Catálogo</a>
+                    <a asp-controller="Productos" asp-action="Index">Productos</a>
                     <a asp-controller="Carrito" asp-action="Index">Carrito</a>
-                    <a asp-controller="Home" asp-action="Contacto">Contacto</a>
+                    <a asp-controller="Home" asp-action="Contacto">El local y contacto</a>
                 </div>
                 <div>
                     <h4>Administración</h4>
@@ -58,7 +62,7 @@
                     }
                 </div>
             </div>
-            <p class="copy">© @DateTime.Today.Year @Tienda.Nombre · Hecho en Argentina</p>
+            <p class="copy">© @DateTime.Today.Year @Tienda.Nombre </p>
         </div>
     </footer>
 

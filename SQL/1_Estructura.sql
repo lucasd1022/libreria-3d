@@ -82,8 +82,12 @@ CREATE TABLE [dbo].[Pedido](
 	[Nombre] [nvarchar](100) NOT NULL,
 	[Email] [nvarchar](100) NOT NULL,
 	[Telefono] [nvarchar](30) NULL,
+	[Forma_Entrega] [nvarchar](10) NOT NULL,
 	[Direccion] [nvarchar](200) NULL,
+	[Localidad] [nvarchar](100) NULL,
+	[Codigo_Postal] [nvarchar](10) NULL,
 	[Notas] [nvarchar](500) NULL,
+	[Costo_Envio] [decimal](12, 2) NOT NULL,
 	[Total] [decimal](12, 2) NOT NULL,
 	[Estado] [nvarchar](20) NOT NULL,
 	[Fecha] [datetime2](0) NOT NULL,
@@ -130,6 +134,10 @@ ALTER TABLE [dbo].[Producto] ADD  CONSTRAINT [DF_Producto_Activo]  DEFAULT ((1))
 GO
 ALTER TABLE [dbo].[Producto] ADD  CONSTRAINT [DF_Producto_Fecha_Alta]  DEFAULT (getdate()) FOR [Fecha_Alta]
 GO
+ALTER TABLE [dbo].[Pedido] ADD  CONSTRAINT [DF_Pedido_Forma_Entrega]  DEFAULT (N'Retiro') FOR [Forma_Entrega]
+GO
+ALTER TABLE [dbo].[Pedido] ADD  CONSTRAINT [DF_Pedido_Costo_Envio]  DEFAULT ((0)) FOR [Costo_Envio]
+GO
 ALTER TABLE [dbo].[Pedido] ADD  CONSTRAINT [DF_Pedido_Total]  DEFAULT ((0)) FOR [Total]
 GO
 ALTER TABLE [dbo].[Pedido] ADD  CONSTRAINT [DF_Pedido_Estado]  DEFAULT (N'Pendiente') FOR [Estado]
@@ -162,9 +170,17 @@ ALTER TABLE [dbo].[Producto]  WITH CHECK ADD  CONSTRAINT [CK_Producto_Stock] CHE
 GO
 ALTER TABLE [dbo].[Producto] CHECK CONSTRAINT [CK_Producto_Stock]
 GO
-ALTER TABLE [dbo].[Pedido]  WITH CHECK ADD  CONSTRAINT [CK_Pedido_Estado] CHECK  (([Estado]=N'Pendiente' OR [Estado]=N'Pagado' OR [Estado]=N'Enviado' OR [Estado]=N'Entregado' OR [Estado]=N'Cancelado'))
+ALTER TABLE [dbo].[Pedido]  WITH CHECK ADD  CONSTRAINT [CK_Pedido_Estado] CHECK  (([Estado]=N'Pendiente' OR [Estado]=N'Pagado' OR [Estado]=N'Listo para retirar' OR [Estado]=N'Enviado' OR [Estado]=N'Entregado' OR [Estado]=N'Cancelado'))
 GO
 ALTER TABLE [dbo].[Pedido] CHECK CONSTRAINT [CK_Pedido_Estado]
+GO
+ALTER TABLE [dbo].[Pedido]  WITH CHECK ADD  CONSTRAINT [CK_Pedido_Forma_Entrega] CHECK  (([Forma_Entrega]=N'Envio' OR [Forma_Entrega]=N'Retiro'))
+GO
+ALTER TABLE [dbo].[Pedido] CHECK CONSTRAINT [CK_Pedido_Forma_Entrega]
+GO
+ALTER TABLE [dbo].[Pedido]  WITH CHECK ADD  CONSTRAINT [CK_Pedido_Direccion_Envio] CHECK  (([Forma_Entrega]=N'Retiro' OR [Direccion] IS NOT NULL AND [Localidad] IS NOT NULL))
+GO
+ALTER TABLE [dbo].[Pedido] CHECK CONSTRAINT [CK_Pedido_Direccion_Envio]
 GO
 ALTER TABLE [dbo].[PedidoItem]  WITH CHECK ADD  CONSTRAINT [CK_PedidoItem_Cantidad] CHECK  (([Cantidad]>(0)))
 GO

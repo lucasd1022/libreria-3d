@@ -86,6 +86,7 @@ public static class BD
     /// <summary>
     /// Crea el pedido con todos sus productos y descuenta el stock en una sola transacción.
     /// Si de algún producto no alcanza el stock no se guarda nada y se devuelve su nombre.
+    /// El costo de envío se calcula en la base con los precios guardados en el pedido.
     /// </summary>
     public static (int? IDPedido, string? SinStock) CrearPedido(CheckoutViewModel d, IEnumerable<LineaCarrito> lineas)
     {
@@ -98,7 +99,10 @@ public static class BD
             d.Nombre,
             d.Email,
             d.Telefono,
+            Forma_Entrega = d.FormaEntrega,
             d.Direccion,
+            d.Localidad,
+            Codigo_Postal = d.CodigoPostal,
             d.Notas
         }, tx, commandType: SP);
 
@@ -117,13 +121,18 @@ public static class BD
             }
         }
 
-        conexion.Execute("CalcularTotalPedido", new { IDPedido = idPedido }, tx, commandType: SP);
+        conexion.Execute("CalcularTotalPedido", new
+        {
+            IDPedido = idPedido,
+            CostoEnvio = Tienda.CostoEnvio,
+            EnvioGratisDesde = Tienda.EnvioGratisDesde
+        }, tx, commandType: SP);
         tx.Commit();
         return (idPedido, null);
     }
 
-    public static List<Pedido> ObtenerPedidos(string? estado) =>
-        Lista<Pedido>("ObtenerPedidos", new { Estado = estado });
+    public static List<Pedido> ObtenerPedidos(string? estado, string? formaEntrega) =>
+        Lista<Pedido>("ObtenerPedidos", new { Estado = estado, Forma_Entrega = formaEntrega });
 
     public static Pedido? ObtenerPedidoPorId(int id)
     {

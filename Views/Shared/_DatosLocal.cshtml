@@ -1,0 +1,24 @@
+<ul class="datos-local">
+    <li>
+        <strong>Dirección</strong>
+        <span>@Tienda.DireccionCompleta</span>
+        <a href="@Tienda.LinkMapa" target="_blank" rel="noopener">Cómo llegar</a>
+    </li>
+    @if (Tienda.Horarios.Length > 0)
+    {
+        <li>
+            <strong>Horarios</strong>
+            @foreach (var horario in Tienda.Horarios)
+            {
+                <span>@horario</span>
+            }
+        </li>
+    }
+    <li>
+        <strong>Contacto</strong>
+        @if (!string.IsNullOrEmpty(Tienda.Telefono)) { <span>Tel: <a href="tel:@Tienda.Telefono.Replace(" ", "")">@Tienda.Telefono</a></span> }
+        @if (!string.IsNullOrEmpty(Tienda.WhatsApp)) { <a href="https://wa.me/@Tienda.WhatsApp" target="_blank" rel="noopener">WhatsApp</a> }
+        @if (!string.IsNullOrEmpty(Tienda.Email)) { <a href="mailto:@Tienda.Email">@Tienda.Email</a> }
+        @if (!string.IsNullOrEmpty(Tienda.Instagram)) { <a href="https://instagram.com/@Tienda.Instagram" target="_blank" rel="noopener">@@@Tienda.Instagram</a> }
+    </li>
+</ul>

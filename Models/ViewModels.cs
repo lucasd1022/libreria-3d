@@ -42,14 +42,26 @@ public class CheckoutViewModel
     [StringLength(100, ErrorMessage = "Usá hasta 100 caracteres")]
     public string Email { get; set; } = "";
 
+    [Required(ErrorMessage = "Ingresá un teléfono para avisarte")]
     [StringLength(30, ErrorMessage = "Usá hasta 30 caracteres")]
-    public string? Telefono { get; set; }
+    [RegularExpression(@"^[\d\s()+-]{6,30}$", ErrorMessage = "Usá solo números, espacios, paréntesis o guiones")]
+    public string Telefono { get; set; } = "";
+
+    public string FormaEntrega { get; set; } = Pedido.EntregaRetiro;
 
     [StringLength(200, ErrorMessage = "Usá hasta 200 caracteres")]
     public string? Direccion { get; set; }
 
+    [StringLength(100, ErrorMessage = "Usá hasta 100 caracteres")]
+    public string? Localidad { get; set; }
+
+    [StringLength(10, ErrorMessage = "Usá hasta 10 caracteres")]
+    public string? CodigoPostal { get; set; }
+
     [StringLength(500, ErrorMessage = "Usá hasta 500 caracteres")]
     public string? Notas { get; set; }
+
+    public bool EsEnvio => FormaEntrega == Pedido.EntregaEnvio;
 }
 
 public class ProductoViewModel

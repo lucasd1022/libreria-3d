@@ -1,20 +1,15 @@
 @{
-    ViewData["Title"] = "Contacto";
+    ViewData["Title"] = "El local";
 }
 
-<div class="contenedor seccion angosto">
-    <h1 class="titulo">Contacto</h1>
-    <div class="tarjeta">
-        <p>¿Tenés una consulta o querés hacer un pedido mayorista? Escribinos.</p>
-        <ul class="lista-datos">
-            @if (!string.IsNullOrEmpty(Tienda.Email))
-            {
-                <li><strong>Email:</strong> <a href="mailto:@Tienda.Email">@Tienda.Email</a></li>
-            }
-            @if (!string.IsNullOrEmpty(Tienda.WhatsApp))
-            {
-                <li><strong>WhatsApp:</strong> <a href="https://wa.me/@Tienda.WhatsApp" target="_blank" rel="noopener">Mandanos un mensaje</a></li>
-            }
-        </ul>
+<div class="contenedor seccion">
+    <h1 class="titulo">Visitanos en el local</h1>
+    <p class="texto-suave">Podés comprar acá en la página y retirarlo sin cargo, o venir a vernos.</p>
+
+    <div class="columnas columnas-5-7">
+        <div class="tarjeta">
+            <partial name="_DatosLocal" />
+        </div>
+        <iframe class="mapa" src="@Tienda.MapaIncrustado" title="Mapa con la ubicación de @Tienda.Nombre" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
     </div>
 </div>

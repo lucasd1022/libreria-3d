@@ -11,11 +11,13 @@ public class PanelController : Controller
 
     // ---------------------------------------------- pedidos ----------------------------------------------
 
-    public IActionResult Pedidos(string? estado)
+    public IActionResult Pedidos(string? estado, string? entrega)
     {
         estado = Models.Pedido.Estados.Contains(estado) ? estado : null;
+        entrega = entrega is Models.Pedido.EntregaEnvio or Models.Pedido.EntregaRetiro ? entrega : null;
         ViewBag.Estado = estado;
-        ViewBag.Pedidos = BD.ObtenerPedidos(estado);
+        ViewBag.Entrega = entrega;
+        ViewBag.Pedidos = BD.ObtenerPedidos(estado, entrega);
         return View();
     }
 

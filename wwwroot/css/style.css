@@ -471,13 +471,21 @@ footer .copy {
   color: #1d4f91;
 }
 
+.estado-listo-para-retirar {
+  background-color: #dff3ef;
+  border-color: #dff3ef;
+  color: #1f6b5c;
+}
+
 .estado-enviado {
   background-color: #ece6f6;
   border-color: #ece6f6;
   color: #4b2f87;
 }
 
-.filtros-estado {
+.filtros-pedidos {
+  display: grid;
+  gap: 10px;
   margin-bottom: 20px;
 }
 
@@ -765,6 +773,159 @@ input[type="checkbox"] {
 .panel-menu .menu-link.activo {
   color: #1f4e5f;
   border-bottom: 3px solid #f4b942;
+}
+
+
+/* ---------------------------------------------- el local ---------------------------------------------- */
+
+.subtitulo-chico {
+  font-size: 19px;
+  color: #1f4e5f;
+  margin: 22px 0 12px;
+}
+
+.beneficios {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e6e1d8;
+  padding: 22px 0;
+}
+
+.beneficios-grilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px 30px;
+}
+
+.beneficios-grilla div {
+  display: flex;
+  flex-direction: column;
+  padding-left: 14px;
+  border-left: 4px solid #f4b942;
+}
+
+.beneficios-grilla strong {
+  color: #1f4e5f;
+}
+
+.beneficios-grilla span {
+  color: #5f6368;
+}
+
+.datos-local {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 18px;
+}
+
+.datos-local li {
+  display: flex;
+  flex-direction: column;
+}
+
+.datos-local strong {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #5f6368;
+}
+
+.visitanos {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.visitanos .subtitulo {
+  margin-top: 0;
+}
+
+.visitanos .datos-local {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 18px 40px;
+}
+
+.mapa {
+  width: 100%;
+  min-height: 380px;
+  border: 1px solid #e6e1d8;
+  border-radius: 16px;
+}
+
+.pie-horario {
+  margin: 0;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.nota-entrega {
+  margin-top: 14px;
+}
+
+.aviso-entrega {
+  background-color: #f6f3ec;
+  border-radius: 12px;
+  padding: 4px 18px 14px;
+  margin: 18px 0;
+}
+
+/* ---------------------------------------------- forma de entrega ---------------------------------------------- */
+
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+legend {
+  padding: 0;
+  margin-bottom: 8px;
+}
+
+.opciones-entrega {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.opcion-entrega {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background-color: #ffffff;
+  border: 2px solid #e6e1d8;
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+.opcion-entrega:has(input:checked) {
+  border-color: #1f4e5f;
+  background-color: #f2f7f8;
+}
+
+.opcion-entrega input {
+  margin-top: 6px;
+  accent-color: #1f4e5f;
+}
+
+.opcion-entrega > span {
+  display: flex;
+  flex-direction: column;
+}
+
+.opcion-entrega .etiqueta {
+  align-self: flex-start;
+  margin: 4px 0;
+}
+
+/* Sin JavaScript: según la opción elegida se muestran la dirección y el total que corresponden. */
+.checkout:has(#entrega-retiro:checked) .datos-envio,
+.checkout:has(#entrega-retiro:checked) .solo-envio,
+.checkout:has(#entrega-envio:checked) .solo-retiro {
+  display: none;
 }
 
 /* ---------------------------------------------- celulares ---------------------------------------------- */

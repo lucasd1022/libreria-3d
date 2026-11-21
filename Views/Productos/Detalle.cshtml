@@ -5,7 +5,7 @@
 
 <div class="contenedor seccion">
     <p class="migas">
-        <a asp-controller="Productos" asp-action="Index">Catálogo</a>
+        <a asp-controller="Productos" asp-action="Index">Productos</a>
         @if (producto.IDCategoria.HasValue)
         {
             <span>›</span> <a asp-controller="Productos" asp-action="Index" asp-route-categoria="@producto.IDCategoria">@producto.Categoria</a>
@@ -34,6 +34,7 @@
                     <input class="campo campo-cantidad" id="cantidad" name="cantidad" type="number" value="1" min="1" max="@producto.Stock">
                     <button class="boton" type="submit">Agregar al carrito</button>
                 </form>
+                <p class="texto-suave nota-entrega">Retiralo sin cargo en @Tienda.DireccionCompleta@(Tienda.HaceEnvios ? $" o pedí envío a domicilio ({Tienda.TextoCostoEnvio})" : "").</p>
             }
             else
             {

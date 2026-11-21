@@ -25,6 +25,7 @@ public class PedidosController : Controller
         {
             return RedirectToAction("Index", "Carrito");
         }
+        Pedidos.ValidarEntrega(modelo, ModelState);
         if (!ModelState.IsValid)
         {
             return Formulario(modelo, carrito);

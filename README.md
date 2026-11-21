@@ -4,12 +4,12 @@
 
 ## 📌 Descripción y objetivos del proyecto
 
-**Librería 3D** es una tienda online de artículos de librería hecha con **ASP.NET Core MVC**. Muestra el catálogo de productos, permite armar un carrito y hacer el pedido, y tiene un panel para que la librería cargue productos y siga los pedidos.
+**Librería 3D** es la página de compra online de una librería de barrio, hecha con **ASP.NET Core MVC**. No es un marketplace: es el sitio propio del negocio. Muestra sus productos, deja armar un carrito y hacer el pedido con **retiro sin cargo en el local** o **envío a domicilio**, y tiene un panel para que la librería cargue productos y prepare los pedidos.
 
 ### 🎯 Objetivos
 
-- Que una persona pueda buscar productos, armar su carrito y hacer un pedido sin crear una cuenta.
-- Que la librería pueda cargar y editar productos, controlar el stock y seguir cada pedido hasta que se entrega.
+- Que una persona pueda buscar productos, armar su carrito y hacer un pedido sin crear una cuenta, eligiendo si lo retira en el local o se lo envían.
+- Que la librería pueda cargar y editar productos, controlar el stock y seguir cada pedido hasta que se retira o se entrega.
 - Guardar y consultar toda la información en **SQL Server** usando **stored procedures** llamados con **Dapper**.
 
 ---
@@ -17,12 +17,17 @@
 ## 🧩 Funcionalidades implementadas
 
 - **Catálogo** con buscador por texto y filtro por categoría, y una página para cada producto.
-- **Inicio** con las categorías y los últimos productos cargados.
+- **Inicio** con los datos del local (dirección, horarios, envíos), las categorías y los últimos productos cargados.
+- **El local**: dirección, horarios, contacto y mapa de Google Maps.
 - **Carrito** guardado en la sesión: agregar, cambiar la cantidad y quitar productos. No deja agregar más unidades que el stock disponible.
-- **Finalizar compra**: la persona deja su nombre, email y, si quiere, teléfono, dirección y notas. El pedido se guarda y el stock se descuenta en una sola transacción: si mientras tanto se terminó el stock de algún producto, no se guarda nada y se le avisa.
-- **Confirmación del pedido**, que solo puede ver quien lo hizo.
+- **Finalizar compra** con dos formas de entrega:
+  - **Retiro en el local**, sin cargo.
+  - **Envío a domicilio**, con costo fijo y envío gratis desde un monto (se configuran en `appsettings.json`). Pide dirección y localidad.
+
+  La persona deja su nombre, email y teléfono. El pedido se guarda, se descuenta el stock y se calcula el envío en una sola transacción: si mientras tanto se terminó el stock de algún producto, no se guarda nada y se le avisa. La dirección y el total con o sin envío se muestran según la opción elegida, solo con CSS.
+- **Confirmación del pedido**, que solo puede ver quien lo hizo: si es retiro muestra la dirección, los horarios y cómo llegar; si es envío, la dirección de entrega.
 - **Panel de administración** con inicio de sesión:
-  - **Pedidos**: lista con filtro por estado, detalle de cada pedido y cambio de estado (Pendiente, Pagado, Enviado, Entregado, Cancelado). El menú muestra cuántos pedidos están pendientes.
+  - **Pedidos**: lista con filtros por forma de entrega y por estado, y detalle de cada pedido. Los estados dependen de la entrega: los de retiro pasan por "Listo para retirar" y los de envío por "Enviado" (Pendiente → Pagado → Listo para retirar / Enviado → Entregado, o Cancelado). El menú muestra cuántos pedidos están pendientes.
   - **Productos**: crear, editar, ocultar y eliminar productos, con precio, stock, categoría e imagen. Los pedidos viejos conservan el nombre y el precio con el que se vendió cada producto.
   - **Contraseña**: cambiar la contraseña del administrador.
 - **Seguridad**: contraseñas guardadas con PBKDF2, todos los formularios protegidos con token antifalsificación y validación de todos los datos en el servidor.
@@ -51,10 +56,10 @@
 
 | Controller | Qué hace |
 |------------|----------|
-| `HomeController` | Inicio, contacto y páginas de error |
+| `HomeController` | Inicio, el local (dirección, horarios y mapa) y páginas de error |
 | `ProductosController` | Catálogo y detalle de cada producto |
 | `CarritoController` | Agregar, actualizar y quitar productos del carrito |
-| `PedidosController` | Finalizar la compra y confirmación del pedido |
+| `PedidosController` | Finalizar la compra (retiro o envío) y confirmación del pedido |
 | `CuentaController` | Iniciar y cerrar la sesión del administrador |
 | `PanelController` | Panel de administración: pedidos, productos y contraseña |
 
@@ -81,12 +86,25 @@ cd libreria-3d
 
 > El script crea el usuario de base `alumno`, que usa el login `alumno` del servidor. Si tu SQL Server no tiene ese login, crealo antes de ejecutar el script.
 
-4. Revisar la cadena de conexión en `appsettings.json`. Por defecto usa `Server=localhost;Database=Libreria3D;Trusted_Connection=True;`. Ahí también están el nombre, el email y el WhatsApp de la tienda que se muestran en la página de contacto.
-5. Ejecutar el programa:
+4. Revisar la cadena de conexión en `appsettings.json`. Por defecto usa `Server=localhost;Database=Libreria3D;Trusted_Connection=True;`.
+5. Completar los datos reales del negocio en la sección `Tienda` de `appsettings.json` (los que vienen son de ejemplo):
+
+| Clave | Qué es |
+|-------|--------|
+| `Nombre`, `Descripcion` | Nombre del local y la frase que aparece en el inicio |
+| `Direccion`, `Localidad` | Dónde se retiran los pedidos. También se usa para el mapa |
+| `Horarios` | Lista de horarios, por ejemplo `["Lunes a viernes de 9 a 19 h", "Sábados de 9 a 13 h"]` |
+| `Telefono`, `Email`, `WhatsApp`, `Instagram` | Contacto. Los que queden vacíos no se muestran. El WhatsApp va con código de país, sin `+` ni espacios |
+| `Envios:Activo` | `false` si el local solo hace retiro |
+| `Envios:Zona` | Hasta dónde llegan los envíos, por ejemplo `CABA y GBA` |
+| `Envios:Costo` | Costo del envío en pesos |
+| `Envios:GratisDesde` | Desde qué monto el envío es gratis. Borrar la línea si nunca es gratis |
+
+6. Ejecutar el programa:
 ```bash
 dotnet watch run
 ```
-6. Para entrar al panel, ir a **Ingresar** (al pie de la página) con el administrador de prueba:
+7. Para entrar al panel, ir a **Ingresar** (al pie de la página) con el administrador de prueba:
    - Email: `admin@libreria3d.com`
    - Contraseña: `Libreria2026`
 
@@ -100,3 +118,4 @@ dotnet watch run
 - Subir las fotos de los productos desde el panel (hoy se escribe la ruta o el link de la imagen).
 - Mandar un mail al cliente cuando hace el pedido y cuando cambia de estado.
 - Cuentas de cliente para ver el historial de pedidos.
+- Calcular el costo de envío según la zona o el código postal.
