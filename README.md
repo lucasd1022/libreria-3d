@@ -96,14 +96,14 @@ cd libreria-3d
 > El script crea el usuario de base `alumno`, que usa el login `alumno` del servidor. Si tu SQL Server no tiene ese login, crealo antes de ejecutar el script.
 
 4. Revisar la cadena de conexión en `appsettings.json`. Por defecto usa `Server=localhost;Database=Libreria3D;Trusted_Connection=True;`.
-5. Completar los datos reales del negocio en la sección `Tienda` de `appsettings.json` (los que vienen son de ejemplo):
+5. Revisar los datos del negocio en la sección `Tienda` de `appsettings.json`:
 
 | Clave | Qué es |
 |-------|--------|
 | `Nombre`, `Descripcion` | Nombre del local y la frase que aparece en el inicio |
 | `Direccion`, `Localidad` | Dónde se retiran los pedidos. También se usa para el mapa |
 | `Horarios` | Lista de horarios, por ejemplo `["Lunes a viernes de 9 a 19 h", "Sábados de 9 a 13 h"]` |
-| `Telefono`, `Email`, `WhatsApp`, `Instagram` | Contacto. Los que queden vacíos no se muestran. El WhatsApp va con código de país, sin `+` ni espacios |
+| `Telefono`, `Email`, `WhatsApp`, `Instagram` | Contacto. Los que queden vacíos no se muestran. El WhatsApp se escribe como se marca en Argentina (por ejemplo `11 5661-2418`) y la página arma el link sola |
 | `Envios:Activo` | `false` si el local solo hace retiro |
 | `Envios:Zona` | Hasta dónde llegan los envíos, por ejemplo `CABA y GBA` |
 | `Envios:Costo` | Costo del envío en pesos |

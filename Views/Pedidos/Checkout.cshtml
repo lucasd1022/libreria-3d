@@ -8,14 +8,14 @@
 
 <div class="contenedor seccion conmutador">
     <h1 class="titulo">Finalizar compra</h1>
-    <p class="texto-suave">Elegí cómo querés recibir tu pedido y dejanos tus datos. Te escribimos para coordinar el pago.</p>
+    <p class="texto-suave">@(Tienda.HaceEnvios ? "Elegí cómo querés recibir tu pedido y dejanos tus datos." : "Dejanos tus datos y lo preparamos para que lo retires en el local.") Te escribimos para coordinar el pago.</p>
 
     <div class="grilla grilla-7-5">
         <div>
             <partial name="_ErroresFormulario" />
             <form class="formulario" asp-controller="Pedidos" asp-action="Checkout" method="post">
                 <fieldset class="fila-campo @Html.ClaseError("FormaEntrega")">
-                    <legend class="campo-titulo">¿Cómo lo querés recibir?</legend>
+                    <legend class="campo-titulo">@(Tienda.HaceEnvios ? "¿Cómo lo querés recibir?" : "Dónde lo retirás")</legend>
                     <div class="grilla-auto">
                         <label class="tarjeta-opcion">
                             <input class="conmutador-a" type="radio" id="entrega-retiro" name="FormaEntrega" value="@Pedido.EntregaRetiro" checked="@(!envio)">
@@ -93,7 +93,7 @@
                 </div>
                 <div class="fila-campo @Html.ClaseError("Notas")">
                     <label class="campo-titulo" for="Notas">Notas <span class="texto-suave">(opcional)</span></label>
-                    <textarea class="campo" id="Notas" name="Notas" rows="3" maxlength="500" placeholder="Por ejemplo: quién retira, horario para recibir el envío…">@datos.Notas</textarea>
+                    <textarea class="campo" id="Notas" name="Notas" rows="3" maxlength="500" placeholder="@(Tienda.HaceEnvios ? "Por ejemplo: quién retira, horario para recibir el envío…" : "Por ejemplo: quién lo pasa a buscar")">@datos.Notas</textarea>
                     <p class="error-texto">@Html.MensajeError("Notas", "Usá hasta 500 caracteres")</p>
                 </div>
                 <button class="boton boton-ancho" type="submit">Confirmar pedido</button>

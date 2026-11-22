@@ -21,6 +21,20 @@ public static class Tienda
     public static decimal CostoEnvio { get; private set; }
     public static decimal? EnvioGratisDesde { get; private set; }
 
+    /// <summary>
+    /// Link de WhatsApp armado a partir del número como lo escribe la gente (por ejemplo "11 5661 2418").
+    /// A los celulares argentinos sin código de país les agrega 549.
+    /// </summary>
+    public static string LinkWhatsApp
+    {
+        get
+        {
+            var numero = new string(WhatsApp.Where(char.IsDigit).ToArray());
+            if (numero.StartsWith("0")) numero = numero[1..];
+            return "https://wa.me/" + (numero.StartsWith("54") ? numero : "549" + numero);
+        }
+    }
+
     public static string DireccionCompleta => string.Join(", ", new[] { Direccion, Localidad }.Where(t => t.Length > 0));
 
     public static string LinkMapa => "https://www.google.com/maps/search/?api=1&query=" + WebUtility.UrlEncode($"{Nombre}, {DireccionCompleta}");
