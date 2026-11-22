@@ -1,0 +1,81 @@
+@{
+    ViewData["Title"] = "Carga masiva";
+    List<string>? asignadas = ViewBag.Asignadas;
+    List<string>? sinProducto = ViewBag.SinProducto;
+    List<string>? invalidas = ViewBag.Invalidas;
+}
+
+<div class="contenedor seccion">
+    <partial name="_PanelMenu" />
+    <h1 class="titulo">Carga masiva</h1>
+    <p class="texto-suave">Cargá o actualizá muchos productos juntos con una planilla de Excel, y subí todas las fotos de una vez.</p>
+
+    @if (asignadas != null)
+    {
+        <div class="tarjeta">
+            <h2 class="tarjeta-subtitulo">Resultado de las fotos</h2>
+            <p><span class="etiqueta etiqueta-verde">@asignadas.Count @(asignadas.Count == 1 ? "asignada" : "asignadas")</span>
+               @if (sinProducto!.Count > 0) { <span class="etiqueta etiqueta-amarilla">@sinProducto.Count sin producto</span> }
+               @if (invalidas!.Count > 0) { <span class="etiqueta etiqueta-roja">@invalidas.Count con errores</span> }</p>
+            @if (sinProducto.Count > 0)
+            {
+                <p class="campo-titulo">No hay ningún producto con estos códigos:</p>
+                <ul class="lista-renglones">
+                    @foreach (var nombre in sinProducto) { <li>@nombre</li> }
+                </ul>
+                <p class="texto-suave">Revisá que el nombre del archivo sea exactamente el código del producto.</p>
+            }
+            @if (invalidas.Count > 0)
+            {
+                <p class="campo-titulo">No se pudieron subir:</p>
+                <ul class="lista-renglones">
+                    @foreach (var detalle in invalidas) { <li>@detalle</li> }
+                </ul>
+            }
+            @if (asignadas.Count > 0)
+            {
+                <details>
+                    <summary class="boton-texto">Ver las fotos asignadas</summary>
+                    <ul class="lista-renglones">
+                        @foreach (var detalle in asignadas) { <li>@detalle</li> }
+                    </ul>
+                </details>
+            }
+        </div>
+    }
+
+    <div class="grilla grilla-2">
+        <section class="tarjeta">
+            <h2 class="tarjeta-subtitulo">1. Productos con una planilla</h2>
+            <ol class="lista-pasos">
+                <li>Descargá la <a asp-controller="Catalogo" asp-action="Plantilla">plantilla vacía</a> o, para modificar lo que ya está cargado, <a asp-controller="Catalogo" asp-action="Exportar">el catálogo actual</a>.</li>
+                <li>Completala en Excel. Cada producto se identifica por su <strong>código</strong>: si ya existe se actualiza, si no se crea.</li>
+                <li>Subila acá. Antes de aplicar nada te mostramos qué va a cambiar.</li>
+            </ol>
+            <form class="formulario" asp-controller="Catalogo" asp-action="Importar" method="post" enctype="multipart/form-data">
+                <div class="fila-campo">
+                    <label class="campo-titulo" for="planilla">Planilla (Excel .xlsx o CSV)</label>
+                    <input class="campo" id="planilla" name="planilla" type="file" accept=".xlsx,.csv" required>
+                </div>
+                <button class="boton boton-ancho" type="submit">Revisar planilla</button>
+            </form>
+            <p class="texto-suave espacio-arriba">Para actualizar solo precios alcanza con las columnas Código y Precio: las celdas vacías no cambian nada.</p>
+        </section>
+
+        <section class="tarjeta">
+            <h2 class="tarjeta-subtitulo">2. Fotos de los productos</h2>
+            <ol class="lista-pasos">
+                <li>Nombrá cada foto con el código del producto, por ejemplo <strong>CUA-A4-80.jpg</strong> o <strong>7790001234567.png</strong>.</li>
+                <li>Seleccioná todas juntas y subilas. Cada una se asigna sola a su producto.</li>
+            </ol>
+            <form class="formulario" asp-controller="Catalogo" asp-action="Fotos" method="post" enctype="multipart/form-data">
+                <div class="fila-campo">
+                    <label class="campo-titulo" for="fotos">Fotos (JPG, PNG o WEBP, hasta 5 MB cada una)</label>
+                    <input class="campo" id="fotos" name="fotos" type="file" accept=".jpg,.jpeg,.png,.webp" multiple required>
+                </div>
+                <button class="boton boton-ancho" type="submit">Subir fotos</button>
+            </form>
+            <p class="texto-suave espacio-arriba">Si un producto ya tenía foto, se reemplaza. Conviene que sean cuadradas o apaisadas y de menos de 1 MB para que la página cargue rápido.</p>
+        </section>
+    </div>
+</div>

@@ -275,6 +275,5 @@ __pycache__/
 # End of https://www.toptal.com/developers/gitignore/api/aspnetcore
 
 
-### Librería 3D: fotos de productos subidas a mano ###
-wwwroot/img/productos/*
-!wwwroot/img/productos/.gitkeep
+### Librería 3D: fotos de productos subidas desde el panel ###
+wwwroot/uploads/

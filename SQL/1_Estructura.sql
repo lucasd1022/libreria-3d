@@ -60,6 +60,7 @@ GO
 CREATE TABLE [dbo].[Producto](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[IDCategoria] [int] NULL,
+	[Codigo] [nvarchar](40) NULL,
 	[Nombre] [nvarchar](120) NOT NULL,
 	[Descripcion] [nvarchar](1000) NULL,
 	[Precio] [decimal](12, 2) NOT NULL,
@@ -118,6 +119,12 @@ CREATE NONCLUSTERED INDEX [IX_Producto_Categoria] ON [dbo].[Producto]
 (
 	[IDCategoria] ASC
 )
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [UX_Producto_Codigo] ON [dbo].[Producto]
+(
+	[Codigo] ASC
+)
+WHERE ([Codigo] IS NOT NULL)
 GO
 CREATE NONCLUSTERED INDEX [IX_PedidoItem_Pedido] ON [dbo].[PedidoItem]
 (

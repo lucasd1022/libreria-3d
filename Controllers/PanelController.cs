@@ -7,6 +7,13 @@ namespace Libreria3D.Controllers;
 [Authorize(Policy = UsuarioActual.PoliticaAdministrador)]
 public class PanelController : Controller
 {
+    private readonly IWebHostEnvironment _entorno;
+
+    public PanelController(IWebHostEnvironment entorno)
+    {
+        _entorno = entorno;
+    }
+
     public IActionResult Index() => RedirectToAction(nameof(Pedidos));
 
     // ---------------------------------------------- pedidos ----------------------------------------------
@@ -56,14 +63,20 @@ public class PanelController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult NuevoProducto(ProductoViewModel modelo)
+    public async Task<IActionResult> NuevoProducto(ProductoViewModel modelo, IFormFile? foto)
     {
+        Limpiar(modelo);
+        ValidarProducto(modelo, foto, null);
         if (!ModelState.IsValid)
         {
             return FormularioProducto(modelo, null);
         }
-        BD.CrearProducto(Limpiar(modelo));
-        Avisar(Resultado.Bien($"Creaste \"{modelo.Nombre.Trim()}\"."));
+        if (foto is { Length: > 0 })
+        {
+            modelo.Imagen = await Archivos.GuardarFoto(foto, _entorno.WebRootPath);
+        }
+        BD.CrearProducto(modelo);
+        Avisar(Resultado.Bien($"Creaste \"{modelo.Nombre}\"."));
         return RedirectToAction(nameof(Productos));
     }
 
@@ -76,18 +89,35 @@ public class PanelController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult EditarProducto(int id, ProductoViewModel modelo)
+    public async Task<IActionResult> EditarProducto(int id, ProductoViewModel modelo, IFormFile? foto, bool quitarFoto)
     {
-        if (BD.ObtenerProductoPorId(id) == null)
+        var actual = BD.ObtenerProductoPorId(id);
+        if (actual == null)
         {
             return NotFound();
         }
+        Limpiar(modelo);
+        modelo.Imagen = actual.Imagen;
+        ValidarProducto(modelo, foto, id);
         if (!ModelState.IsValid)
         {
             return FormularioProducto(modelo, id);
         }
-        BD.ActualizarProducto(id, Limpiar(modelo));
-        Avisar(Resultado.Bien($"Guardaste los cambios de \"{modelo.Nombre.Trim()}\"."));
+
+        if (foto is { Length: > 0 })
+        {
+            modelo.Imagen = await Archivos.GuardarFoto(foto, _entorno.WebRootPath);
+        }
+        else if (quitarFoto)
+        {
+            modelo.Imagen = null;
+        }
+        BD.ActualizarProducto(id, modelo);
+        if (modelo.Imagen != actual.Imagen)
+        {
+            Archivos.BorrarFoto(actual.Imagen, _entorno.WebRootPath);
+        }
+        Avisar(Resultado.Bien($"Guardaste los cambios de \"{modelo.Nombre}\"."));
         return RedirectToAction(nameof(Productos));
     }
 
@@ -99,6 +129,7 @@ public class PanelController : Controller
         if (producto != null)
         {
             BD.EliminarProducto(id);
+            Archivos.BorrarFoto(producto.Imagen, _entorno.WebRootPath);
             Avisar(Resultado.Bien($"Eliminaste \"{producto.Nombre}\"."));
         }
         return RedirectToAction(nameof(Productos));
@@ -135,12 +166,23 @@ public class PanelController : Controller
         return View("ProductoFormulario");
     }
 
-    private static ProductoViewModel Limpiar(ProductoViewModel p)
+    private static void Limpiar(ProductoViewModel p)
     {
+        p.Codigo = string.IsNullOrWhiteSpace(p.Codigo) ? null : p.Codigo.Trim();
         p.Nombre = p.Nombre.Trim();
         p.Descripcion = string.IsNullOrWhiteSpace(p.Descripcion) ? null : p.Descripcion.Trim();
-        p.Imagen = string.IsNullOrWhiteSpace(p.Imagen) ? null : p.Imagen.Trim();
-        return p;
+    }
+
+    private void ValidarProducto(ProductoViewModel p, IFormFile? foto, int? id)
+    {
+        if (p.Codigo != null && BD.ExisteCodigoProducto(p.Codigo, id))
+        {
+            ModelState.AddModelError(nameof(p.Codigo), "Ya hay otro producto con ese código");
+        }
+        if (Archivos.ValidarFoto(foto) is string error)
+        {
+            ModelState.AddModelError("Foto", error);
+        }
     }
 
     private void Avisar(Resultado resultado)

@@ -73,10 +73,64 @@ public static class BD
     }
 
     public static int CrearProducto(ProductoViewModel p) =>
-        Valor<int>("CrearProducto", new { p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.IDCategoria });
+        Valor<int>("CrearProducto", new { p.Codigo, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.IDCategoria });
 
     public static void ActualizarProducto(int id, ProductoViewModel p) =>
-        Ejecutar("ActualizarProducto", new { ID = id, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.IDCategoria });
+        Ejecutar("ActualizarProducto", new { ID = id, p.Codigo, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.IDCategoria });
+
+    public static bool ExisteCodigoProducto(string codigo, int? exceptoId = null) =>
+        Valor<bool>("ExisteCodigoProducto", new { Codigo = codigo, Excepto = exceptoId });
+
+    public static Producto? ObtenerProductoPorCodigo(string codigo) =>
+        Uno<Producto>("ObtenerProductoPorCodigo", new { Codigo = codigo });
+
+    public static HashSet<string> ObtenerCodigosDeProductos() =>
+        new(Lista<string>("ObtenerCodigosDeProductos"), StringComparer.OrdinalIgnoreCase);
+
+    public static void CambiarImagenProducto(int id, string? imagen) =>
+        Ejecutar("CambiarImagenProducto", new { ID = id, Imagen = imagen });
+
+    /// <summary>
+    /// Crea o actualiza todas las filas de una planilla en una sola transacción:
+    /// si una falla no queda nada a medias. Las categorías que no existen se crean.
+    /// </summary>
+    public static (int Creados, int Actualizados) ImportarProductos(IEnumerable<FilaPlanilla> filas)
+    {
+        using var conexion = Conectar();
+        conexion.Open();
+        using var tx = conexion.BeginTransaction();
+
+        var categorias = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        int creados = 0, actualizados = 0;
+        foreach (var fila in filas)
+        {
+            int? idCategoria = null;
+            if (fila.Categoria != null)
+            {
+                if (!categorias.TryGetValue(fila.Categoria, out var id))
+                {
+                    id = conexion.ExecuteScalar<int>("ObtenerOCrearCategoria", new { Nombre = fila.Categoria }, tx, commandType: SP);
+                    categorias[fila.Categoria] = id;
+                }
+                idCategoria = id;
+            }
+
+            var creado = conexion.ExecuteScalar<bool>("ImportarProducto", new
+            {
+                fila.Codigo,
+                fila.Nombre,
+                fila.Descripcion,
+                fila.Precio,
+                fila.Stock,
+                Activo = fila.Visible,
+                IDCategoria = idCategoria
+            }, tx, commandType: SP);
+            if (creado) creados++; else actualizados++;
+        }
+
+        tx.Commit();
+        return (creados, actualizados);
+    }
 
     public static void EliminarProducto(int id) =>
         Ejecutar("EliminarProducto", new { ID = id });

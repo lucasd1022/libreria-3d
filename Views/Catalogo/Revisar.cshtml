@@ -1,0 +1,81 @@
+@{
+    ViewData["Title"] = "Revisar planilla";
+    LecturaPlanilla lectura = ViewBag.Lectura;
+    var conErrores = lectura.ConErrores;
+    var validas = lectura.Validas;
+}
+
+<div class="contenedor seccion">
+    <partial name="_PanelMenu" />
+    <h1 class="titulo">Revisar planilla</h1>
+    <p class="texto-suave">@ViewBag.Archivo · @lectura.Filas.Count filas. Todavía no se cambió nada.</p>
+
+    <div class="fila-envuelta">
+        <span class="etiqueta etiqueta-verde">@lectura.Nuevas @(lectura.Nuevas == 1 ? "nuevo" : "nuevos")</span>
+        <span class="etiqueta etiqueta-azul">@lectura.Actualizaciones a actualizar</span>
+        @if (conErrores.Count > 0) { <span class="etiqueta etiqueta-roja">@conErrores.Count con @(conErrores.Count == 1 ? "error" : "errores")</span> }
+    </div>
+
+    @if (lectura.ColumnasIgnoradas.Count > 0)
+    {
+        <p class="mensaje">Estas columnas no se usan y se van a ignorar: @string.Join(", ", lectura.ColumnasIgnoradas).</p>
+    }
+
+    @if (conErrores.Count > 0)
+    {
+        <h2 class="subtitulo-chico">Filas con errores (no se van a cargar)</h2>
+        <div class="tabla-contenedor">
+            <table class="tabla">
+                <thead><tr><th>Fila</th><th>Código</th><th>Nombre</th><th>Qué hay que corregir</th></tr></thead>
+                <tbody>
+                    @foreach (var fila in conErrores)
+                    {
+                        <tr><td>@fila.Fila</td><td>@fila.Codigo</td><td>@fila.Nombre</td><td class="texto-error">@string.Join(" · ", fila.Errores)</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (validas.Count > 0)
+    {
+        <h2 class="subtitulo-chico">Filas que se van a cargar</h2>
+        <p class="texto-suave">En los productos que se actualizan, lo que aparece vacío no cambia.</p>
+        <div class="tabla-contenedor">
+            <table class="tabla">
+                <thead><tr><th>Fila</th><th></th><th>Código</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Visible</th></tr></thead>
+                <tbody>
+                    @foreach (var fila in validas.Take(500))
+                    {
+                        <tr>
+                            <td>@fila.Fila</td>
+                            <td><span class="etiqueta @(fila.EsNueva ? "etiqueta-verde" : "etiqueta-azul")">@(fila.EsNueva ? "Nuevo" : "Actualiza")</span></td>
+                            <td>@fila.Codigo</td>
+                            <td>@fila.Nombre</td>
+                            <td>@fila.Categoria</td>
+                            <td>@(fila.Precio.HasValue ? Vistas.Precio(fila.Precio.Value) : "")</td>
+                            <td>@fila.Stock</td>
+                            <td>@(fila.Visible == null ? "" : fila.Visible.Value ? "Sí" : "No")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (validas.Count > 500)
+        {
+            <p class="texto-suave espacio-arriba">Se muestran las primeras 500 de @validas.Count filas; se van a cargar todas.</p>
+        }
+    }
+
+    <div class="fila-final">
+        <form asp-controller="Catalogo" asp-action="Cancelar" method="post">
+            <button class="boton boton-borde" type="submit">Cancelar</button>
+        </form>
+        @if (validas.Count > 0)
+        {
+            <form asp-controller="Catalogo" asp-action="Confirmar" method="post">
+                <button class="boton" type="submit">Cargar @validas.Count @(validas.Count == 1 ? "producto" : "productos")@(conErrores.Count > 0 ? " sin errores" : "")</button>
+            </form>
+        }
+    </div>
+</div>

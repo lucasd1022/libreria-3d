@@ -60,6 +60,7 @@ GO
 CREATE TABLE [dbo].[Producto](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[IDCategoria] [int] NULL,
+	[Codigo] [nvarchar](40) NULL,
 	[Nombre] [nvarchar](120) NOT NULL,
 	[Descripcion] [nvarchar](1000) NULL,
 	[Precio] [decimal](12, 2) NOT NULL,
@@ -118,6 +119,12 @@ CREATE NONCLUSTERED INDEX [IX_Producto_Categoria] ON [dbo].[Producto]
 (
 	[IDCategoria] ASC
 )
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [UX_Producto_Codigo] ON [dbo].[Producto]
+(
+	[Codigo] ASC
+)
+WHERE ([Codigo] IS NOT NULL)
 GO
 CREATE NONCLUSTERED INDEX [IX_PedidoItem_Pedido] ON [dbo].[PedidoItem]
 (
@@ -198,14 +205,14 @@ SET IDENTITY_INSERT [dbo].[Categoria] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Producto] ON 
 
-INSERT [dbo].[Producto] ([ID], [IDCategoria], [Nombre], [Descripcion], [Precio], [Stock], [Imagen], [Activo]) VALUES (1, 1, N'Cuaderno A4 rayado 80 hojas', N'Tapa dura, espiral metálico, hojas de 80 g.', CAST(4500.00 AS Decimal(12, 2)), 25, NULL, 1)
-INSERT [dbo].[Producto] ([ID], [IDCategoria], [Nombre], [Descripcion], [Precio], [Stock], [Imagen], [Activo]) VALUES (2, 1, N'Cuaderno A5 punteado', N'Ideal para bullet journal. 96 hojas de 100 g.', CAST(3900.00 AS Decimal(12, 2)), 18, NULL, 1)
-INSERT [dbo].[Producto] ([ID], [IDCategoria], [Nombre], [Descripcion], [Precio], [Stock], [Imagen], [Activo]) VALUES (3, 2, N'Bolígrafos azules x10', N'Trazo medio 1.0 mm, tinta de secado rápido.', CAST(2800.00 AS Decimal(12, 2)), 40, NULL, 1)
-INSERT [dbo].[Producto] ([ID], [IDCategoria], [Nombre], [Descripcion], [Precio], [Stock], [Imagen], [Activo]) VALUES (4, 2, N'Resaltadores pastel x6', N'Punta biselada, tonos pastel.', CAST(3300.00 AS Decimal(12, 2)), 30, NULL, 1)
-INSERT [dbo].[Producto] ([ID], [IDCategoria], [Nombre], [Descripcion], [Precio], [Stock], [Imagen], [Activo]) VALUES (5, 3, N'Fibras de colores x24', N'Punta fina, lavables, colores intensos.', CAST(6200.00 AS Decimal(12, 2)), 12, NULL, 1)
-INSERT [dbo].[Producto] ([ID], [IDCategoria], [Nombre], [Descripcion], [Precio], [Stock], [Imagen], [Activo]) VALUES (6, 3, N'Lápices de colores x36', N'Mina blanda de 3.3 mm, estuche metálico.', CAST(7400.00 AS Decimal(12, 2)), 15, NULL, 1)
-INSERT [dbo].[Producto] ([ID], [IDCategoria], [Nombre], [Descripcion], [Precio], [Stock], [Imagen], [Activo]) VALUES (7, 4, N'Carpeta A4 con anillos', N'Tres anillos, tapa plástica resistente.', CAST(3600.00 AS Decimal(12, 2)), 20, NULL, 1)
-INSERT [dbo].[Producto] ([ID], [IDCategoria], [Nombre], [Descripcion], [Precio], [Stock], [Imagen], [Activo]) VALUES (8, 5, N'Abrochadora metálica', N'Para broches 21/6, hasta 20 hojas.', CAST(5900.00 AS Decimal(12, 2)), 10, NULL, 1)
+INSERT [dbo].[Producto] ([ID], [IDCategoria], [Codigo], [Nombre], [Descripcion], [Precio], [Stock], [Imagen], [Activo]) VALUES (1, 1, N'CUA-A4-80', N'Cuaderno A4 rayado 80 hojas', N'Tapa dura, espiral metálico, hojas de 80 g.', CAST(4500.00 AS Decimal(12, 2)), 25, NULL, 1)
+INSERT [dbo].[Producto] ([ID], [IDCategoria], [Codigo], [Nombre], [Descripcion], [Precio], [Stock], [Imagen], [Activo]) VALUES (2, 1, N'CUA-A5-PUN', N'Cuaderno A5 punteado', N'Ideal para bullet journal. 96 hojas de 100 g.', CAST(3900.00 AS Decimal(12, 2)), 18, NULL, 1)
+INSERT [dbo].[Producto] ([ID], [IDCategoria], [Codigo], [Nombre], [Descripcion], [Precio], [Stock], [Imagen], [Activo]) VALUES (3, 2, N'BOL-AZ-10', N'Bolígrafos azules x10', N'Trazo medio 1.0 mm, tinta de secado rápido.', CAST(2800.00 AS Decimal(12, 2)), 40, NULL, 1)
+INSERT [dbo].[Producto] ([ID], [IDCategoria], [Codigo], [Nombre], [Descripcion], [Precio], [Stock], [Imagen], [Activo]) VALUES (4, 2, N'RES-PAS-6', N'Resaltadores pastel x6', N'Punta biselada, tonos pastel.', CAST(3300.00 AS Decimal(12, 2)), 30, NULL, 1)
+INSERT [dbo].[Producto] ([ID], [IDCategoria], [Codigo], [Nombre], [Descripcion], [Precio], [Stock], [Imagen], [Activo]) VALUES (5, 3, N'FIB-24', N'Fibras de colores x24', N'Punta fina, lavables, colores intensos.', CAST(6200.00 AS Decimal(12, 2)), 12, NULL, 1)
+INSERT [dbo].[Producto] ([ID], [IDCategoria], [Codigo], [Nombre], [Descripcion], [Precio], [Stock], [Imagen], [Activo]) VALUES (6, 3, N'LAP-COL-36', N'Lápices de colores x36', N'Mina blanda de 3.3 mm, estuche metálico.', CAST(7400.00 AS Decimal(12, 2)), 15, NULL, 1)
+INSERT [dbo].[Producto] ([ID], [IDCategoria], [Codigo], [Nombre], [Descripcion], [Precio], [Stock], [Imagen], [Activo]) VALUES (7, 4, N'CAR-A4-ANI', N'Carpeta A4 con anillos', N'Tres anillos, tapa plástica resistente.', CAST(3600.00 AS Decimal(12, 2)), 20, NULL, 1)
+INSERT [dbo].[Producto] ([ID], [IDCategoria], [Codigo], [Nombre], [Descripcion], [Precio], [Stock], [Imagen], [Activo]) VALUES (8, 5, N'ABR-MET', N'Abrochadora metálica', N'Para broches 21/6, hasta 20 hojas.', CAST(5900.00 AS Decimal(12, 2)), 10, NULL, 1)
 SET IDENTITY_INSERT [dbo].[Producto] OFF
 GO
 -- Administrador inicial: admin@libreria3d.com / Libreria2026 (cambiala desde Panel > Contraseña)
@@ -271,12 +278,12 @@ CREATE OR ALTER PROCEDURE BuscarProductos
     @SoloActivos BIT = 1
 AS
 BEGIN
-    SELECT p.ID, p.IDCategoria, c.Nombre AS Categoria, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.Fecha_Alta
+    SELECT p.ID, p.IDCategoria, c.Nombre AS Categoria, p.Codigo, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.Fecha_Alta
     FROM Producto p
     LEFT JOIN Categoria c ON c.ID = p.IDCategoria
     WHERE (@SoloActivos = 0 OR p.Activo = 1)
       AND (@IDCategoria IS NULL OR p.IDCategoria = @IDCategoria)
-      AND (@Texto IS NULL OR p.Nombre LIKE N'%' + @Texto + N'%' OR p.Descripcion LIKE N'%' + @Texto + N'%')
+      AND (@Texto IS NULL OR p.Codigo = @Texto OR p.Nombre LIKE N'%' + @Texto + N'%' OR p.Descripcion LIKE N'%' + @Texto + N'%')
     ORDER BY p.Nombre
 END
 GO
@@ -285,7 +292,7 @@ CREATE OR ALTER PROCEDURE ObtenerProductosNuevos
     @Cantidad INT
 AS
 BEGIN
-    SELECT TOP (@Cantidad) p.ID, p.IDCategoria, c.Nombre AS Categoria, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.Fecha_Alta
+    SELECT TOP (@Cantidad) p.ID, p.IDCategoria, c.Nombre AS Categoria, p.Codigo, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.Fecha_Alta
     FROM Producto p
     LEFT JOIN Categoria c ON c.ID = p.IDCategoria
     WHERE p.Activo = 1 AND p.Stock > 0
@@ -297,7 +304,7 @@ CREATE OR ALTER PROCEDURE ObtenerProductoPorId
     @ID INT
 AS
 BEGIN
-    SELECT p.ID, p.IDCategoria, c.Nombre AS Categoria, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.Fecha_Alta
+    SELECT p.ID, p.IDCategoria, c.Nombre AS Categoria, p.Codigo, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.Fecha_Alta
     FROM Producto p
     LEFT JOIN Categoria c ON c.ID = p.IDCategoria
     WHERE p.ID = @ID
@@ -309,7 +316,7 @@ CREATE OR ALTER PROCEDURE ObtenerProductosPorIds
     @IDs NVARCHAR(MAX)
 AS
 BEGIN
-    SELECT p.ID, p.IDCategoria, c.Nombre AS Categoria, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.Fecha_Alta
+    SELECT p.ID, p.IDCategoria, c.Nombre AS Categoria, p.Codigo, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.Fecha_Alta
     FROM Producto p
     LEFT JOIN Categoria c ON c.ID = p.IDCategoria
     WHERE p.ID IN (SELECT TRY_CAST(value AS INT) FROM STRING_SPLIT(@IDs, N','))
@@ -317,6 +324,7 @@ END
 GO
 
 CREATE OR ALTER PROCEDURE CrearProducto
+    @Codigo NVARCHAR(40) = NULL,
     @Nombre NVARCHAR(120),
     @Descripcion NVARCHAR(1000) = NULL,
     @Precio DECIMAL(12, 2),
@@ -327,8 +335,8 @@ CREATE OR ALTER PROCEDURE CrearProducto
 AS
 BEGIN
     SET NOCOUNT ON
-    INSERT INTO Producto (Nombre, Descripcion, Precio, Stock, Imagen, Activo, IDCategoria)
-    VALUES (@Nombre, @Descripcion, @Precio, @Stock, @Imagen, @Activo, @IDCategoria)
+    INSERT INTO Producto (Codigo, Nombre, Descripcion, Precio, Stock, Imagen, Activo, IDCategoria)
+    VALUES (@Codigo, @Nombre, @Descripcion, @Precio, @Stock, @Imagen, @Activo, @IDCategoria)
 
     SELECT CAST(SCOPE_IDENTITY() AS INT) AS ID
 END
@@ -336,6 +344,7 @@ GO
 
 CREATE OR ALTER PROCEDURE ActualizarProducto
     @ID INT,
+    @Codigo NVARCHAR(40) = NULL,
     @Nombre NVARCHAR(120),
     @Descripcion NVARCHAR(1000) = NULL,
     @Precio DECIMAL(12, 2),
@@ -346,7 +355,8 @@ CREATE OR ALTER PROCEDURE ActualizarProducto
 AS
 BEGIN
     UPDATE Producto
-    SET Nombre = @Nombre,
+    SET Codigo = @Codigo,
+        Nombre = @Nombre,
         Descripcion = @Descripcion,
         Precio = @Precio,
         Stock = @Stock,
@@ -364,6 +374,102 @@ AS
 BEGIN
     DELETE FROM Producto
     WHERE ID = @ID
+END
+GO
+
+CREATE OR ALTER PROCEDURE ExisteCodigoProducto
+    @Codigo NVARCHAR(40),
+    @Excepto INT = NULL
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM Producto WHERE Codigo = @Codigo AND ID <> ISNULL(@Excepto, 0))
+        SELECT CAST(1 AS BIT) AS Existe
+    ELSE
+        SELECT CAST(0 AS BIT) AS Existe
+END
+GO
+
+CREATE OR ALTER PROCEDURE ObtenerProductoPorCodigo
+    @Codigo NVARCHAR(40)
+AS
+BEGIN
+    SELECT p.ID, p.IDCategoria, c.Nombre AS Categoria, p.Codigo, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.Fecha_Alta
+    FROM Producto p
+    LEFT JOIN Categoria c ON c.ID = p.IDCategoria
+    WHERE p.Codigo = @Codigo
+END
+GO
+
+-- Todos los códigos cargados, para saber qué filas de una planilla son nuevas y cuáles actualizan.
+CREATE OR ALTER PROCEDURE ObtenerCodigosDeProductos
+AS
+BEGIN
+    SELECT Codigo
+    FROM Producto
+    WHERE Codigo IS NOT NULL
+END
+GO
+
+CREATE OR ALTER PROCEDURE CambiarImagenProducto
+    @ID INT,
+    @Imagen NVARCHAR(260) = NULL
+AS
+BEGIN
+    UPDATE Producto
+    SET Imagen = @Imagen
+    WHERE ID = @ID
+END
+GO
+
+-- Devuelve el ID de la categoría con ese nombre y la crea si no existe.
+CREATE OR ALTER PROCEDURE ObtenerOCrearCategoria
+    @Nombre NVARCHAR(60)
+AS
+BEGIN
+    SET NOCOUNT ON
+    DECLARE @ID INT = (SELECT ID FROM Categoria WHERE Nombre = @Nombre)
+    IF @ID IS NULL
+    BEGIN
+        INSERT INTO Categoria (Nombre) VALUES (@Nombre)
+        SET @ID = CAST(SCOPE_IDENTITY() AS INT)
+    END
+    SELECT @ID AS ID
+END
+GO
+
+-- Crea o actualiza un producto según su código (para importar planillas).
+-- Al actualizar, los parámetros en NULL (celdas vacías) dejan el valor que ya tenía.
+-- Devuelve 1 si lo creó y 0 si lo actualizó.
+CREATE OR ALTER PROCEDURE ImportarProducto
+    @Codigo NVARCHAR(40),
+    @Nombre NVARCHAR(120) = NULL,
+    @Descripcion NVARCHAR(1000) = NULL,
+    @Precio DECIMAL(12, 2) = NULL,
+    @Stock INT = NULL,
+    @Activo BIT = NULL,
+    @IDCategoria INT = NULL
+AS
+BEGIN
+    SET NOCOUNT ON
+    DECLARE @ID INT = (SELECT ID FROM Producto WHERE Codigo = @Codigo)
+
+    IF @ID IS NULL
+    BEGIN
+        INSERT INTO Producto (Codigo, Nombre, Descripcion, Precio, Stock, Activo, IDCategoria)
+        VALUES (@Codigo, @Nombre, @Descripcion, @Precio, ISNULL(@Stock, 0), ISNULL(@Activo, 1), @IDCategoria)
+        SELECT CAST(1 AS BIT) AS Creado
+        RETURN
+    END
+
+    UPDATE Producto
+    SET Nombre = ISNULL(@Nombre, Nombre),
+        Descripcion = ISNULL(@Descripcion, Descripcion),
+        Precio = ISNULL(@Precio, Precio),
+        Stock = ISNULL(@Stock, Stock),
+        Activo = ISNULL(@Activo, Activo),
+        IDCategoria = ISNULL(@IDCategoria, IDCategoria)
+    WHERE ID = @ID
+    SELECT CAST(0 AS BIT) AS Creado
 END
 GO
 

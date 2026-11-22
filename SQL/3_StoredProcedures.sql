@@ -56,12 +56,12 @@ CREATE OR ALTER PROCEDURE BuscarProductos
     @SoloActivos BIT = 1
 AS
 BEGIN
-    SELECT p.ID, p.IDCategoria, c.Nombre AS Categoria, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.Fecha_Alta
+    SELECT p.ID, p.IDCategoria, c.Nombre AS Categoria, p.Codigo, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.Fecha_Alta
     FROM Producto p
     LEFT JOIN Categoria c ON c.ID = p.IDCategoria
     WHERE (@SoloActivos = 0 OR p.Activo = 1)
       AND (@IDCategoria IS NULL OR p.IDCategoria = @IDCategoria)
-      AND (@Texto IS NULL OR p.Nombre LIKE N'%' + @Texto + N'%' OR p.Descripcion LIKE N'%' + @Texto + N'%')
+      AND (@Texto IS NULL OR p.Codigo = @Texto OR p.Nombre LIKE N'%' + @Texto + N'%' OR p.Descripcion LIKE N'%' + @Texto + N'%')
     ORDER BY p.Nombre
 END
 GO
@@ -70,7 +70,7 @@ CREATE OR ALTER PROCEDURE ObtenerProductosNuevos
     @Cantidad INT
 AS
 BEGIN
-    SELECT TOP (@Cantidad) p.ID, p.IDCategoria, c.Nombre AS Categoria, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.Fecha_Alta
+    SELECT TOP (@Cantidad) p.ID, p.IDCategoria, c.Nombre AS Categoria, p.Codigo, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.Fecha_Alta
     FROM Producto p
     LEFT JOIN Categoria c ON c.ID = p.IDCategoria
     WHERE p.Activo = 1 AND p.Stock > 0
@@ -82,7 +82,7 @@ CREATE OR ALTER PROCEDURE ObtenerProductoPorId
     @ID INT
 AS
 BEGIN
-    SELECT p.ID, p.IDCategoria, c.Nombre AS Categoria, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.Fecha_Alta
+    SELECT p.ID, p.IDCategoria, c.Nombre AS Categoria, p.Codigo, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.Fecha_Alta
     FROM Producto p
     LEFT JOIN Categoria c ON c.ID = p.IDCategoria
     WHERE p.ID = @ID
@@ -94,7 +94,7 @@ CREATE OR ALTER PROCEDURE ObtenerProductosPorIds
     @IDs NVARCHAR(MAX)
 AS
 BEGIN
-    SELECT p.ID, p.IDCategoria, c.Nombre AS Categoria, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.Fecha_Alta
+    SELECT p.ID, p.IDCategoria, c.Nombre AS Categoria, p.Codigo, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.Fecha_Alta
     FROM Producto p
     LEFT JOIN Categoria c ON c.ID = p.IDCategoria
     WHERE p.ID IN (SELECT TRY_CAST(value AS INT) FROM STRING_SPLIT(@IDs, N','))
@@ -102,6 +102,7 @@ END
 GO
 
 CREATE OR ALTER PROCEDURE CrearProducto
+    @Codigo NVARCHAR(40) = NULL,
     @Nombre NVARCHAR(120),
     @Descripcion NVARCHAR(1000) = NULL,
     @Precio DECIMAL(12, 2),
@@ -112,8 +113,8 @@ CREATE OR ALTER PROCEDURE CrearProducto
 AS
 BEGIN
     SET NOCOUNT ON
-    INSERT INTO Producto (Nombre, Descripcion, Precio, Stock, Imagen, Activo, IDCategoria)
-    VALUES (@Nombre, @Descripcion, @Precio, @Stock, @Imagen, @Activo, @IDCategoria)
+    INSERT INTO Producto (Codigo, Nombre, Descripcion, Precio, Stock, Imagen, Activo, IDCategoria)
+    VALUES (@Codigo, @Nombre, @Descripcion, @Precio, @Stock, @Imagen, @Activo, @IDCategoria)
 
     SELECT CAST(SCOPE_IDENTITY() AS INT) AS ID
 END
@@ -121,6 +122,7 @@ GO
 
 CREATE OR ALTER PROCEDURE ActualizarProducto
     @ID INT,
+    @Codigo NVARCHAR(40) = NULL,
     @Nombre NVARCHAR(120),
     @Descripcion NVARCHAR(1000) = NULL,
     @Precio DECIMAL(12, 2),
@@ -131,7 +133,8 @@ CREATE OR ALTER PROCEDURE ActualizarProducto
 AS
 BEGIN
     UPDATE Producto
-    SET Nombre = @Nombre,
+    SET Codigo = @Codigo,
+        Nombre = @Nombre,
         Descripcion = @Descripcion,
         Precio = @Precio,
         Stock = @Stock,
@@ -149,6 +152,102 @@ AS
 BEGIN
     DELETE FROM Producto
     WHERE ID = @ID
+END
+GO
+
+CREATE OR ALTER PROCEDURE ExisteCodigoProducto
+    @Codigo NVARCHAR(40),
+    @Excepto INT = NULL
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM Producto WHERE Codigo = @Codigo AND ID <> ISNULL(@Excepto, 0))
+        SELECT CAST(1 AS BIT) AS Existe
+    ELSE
+        SELECT CAST(0 AS BIT) AS Existe
+END
+GO
+
+CREATE OR ALTER PROCEDURE ObtenerProductoPorCodigo
+    @Codigo NVARCHAR(40)
+AS
+BEGIN
+    SELECT p.ID, p.IDCategoria, c.Nombre AS Categoria, p.Codigo, p.Nombre, p.Descripcion, p.Precio, p.Stock, p.Imagen, p.Activo, p.Fecha_Alta
+    FROM Producto p
+    LEFT JOIN Categoria c ON c.ID = p.IDCategoria
+    WHERE p.Codigo = @Codigo
+END
+GO
+
+-- Todos los códigos cargados, para saber qué filas de una planilla son nuevas y cuáles actualizan.
+CREATE OR ALTER PROCEDURE ObtenerCodigosDeProductos
+AS
+BEGIN
+    SELECT Codigo
+    FROM Producto
+    WHERE Codigo IS NOT NULL
+END
+GO
+
+CREATE OR ALTER PROCEDURE CambiarImagenProducto
+    @ID INT,
+    @Imagen NVARCHAR(260) = NULL
+AS
+BEGIN
+    UPDATE Producto
+    SET Imagen = @Imagen
+    WHERE ID = @ID
+END
+GO
+
+-- Devuelve el ID de la categoría con ese nombre y la crea si no existe.
+CREATE OR ALTER PROCEDURE ObtenerOCrearCategoria
+    @Nombre NVARCHAR(60)
+AS
+BEGIN
+    SET NOCOUNT ON
+    DECLARE @ID INT = (SELECT ID FROM Categoria WHERE Nombre = @Nombre)
+    IF @ID IS NULL
+    BEGIN
+        INSERT INTO Categoria (Nombre) VALUES (@Nombre)
+        SET @ID = CAST(SCOPE_IDENTITY() AS INT)
+    END
+    SELECT @ID AS ID
+END
+GO
+
+-- Crea o actualiza un producto según su código (para importar planillas).
+-- Al actualizar, los parámetros en NULL (celdas vacías) dejan el valor que ya tenía.
+-- Devuelve 1 si lo creó y 0 si lo actualizó.
+CREATE OR ALTER PROCEDURE ImportarProducto
+    @Codigo NVARCHAR(40),
+    @Nombre NVARCHAR(120) = NULL,
+    @Descripcion NVARCHAR(1000) = NULL,
+    @Precio DECIMAL(12, 2) = NULL,
+    @Stock INT = NULL,
+    @Activo BIT = NULL,
+    @IDCategoria INT = NULL
+AS
+BEGIN
+    SET NOCOUNT ON
+    DECLARE @ID INT = (SELECT ID FROM Producto WHERE Codigo = @Codigo)
+
+    IF @ID IS NULL
+    BEGIN
+        INSERT INTO Producto (Codigo, Nombre, Descripcion, Precio, Stock, Activo, IDCategoria)
+        VALUES (@Codigo, @Nombre, @Descripcion, @Precio, ISNULL(@Stock, 0), ISNULL(@Activo, 1), @IDCategoria)
+        SELECT CAST(1 AS BIT) AS Creado
+        RETURN
+    END
+
+    UPDATE Producto
+    SET Nombre = ISNULL(@Nombre, Nombre),
+        Descripcion = ISNULL(@Descripcion, Descripcion),
+        Precio = ISNULL(@Precio, Precio),
+        Stock = ISNULL(@Stock, Stock),
+        Activo = ISNULL(@Activo, Activo),
+        IDCategoria = ISNULL(@IDCategoria, IDCategoria)
+    WHERE ID = @ID
+    SELECT CAST(0 AS BIT) AS Creado
 END
 GO
 

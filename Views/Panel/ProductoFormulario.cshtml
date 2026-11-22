@@ -10,7 +10,12 @@
 
     <partial name="_ErroresFormulario" />
 
-    <form class="formulario tarjeta" asp-controller="Panel" asp-action="@(id == null ? "NuevoProducto" : "EditarProducto")" asp-route-id="@id" method="post">
+    <form class="formulario tarjeta" asp-controller="Panel" asp-action="@(id == null ? "NuevoProducto" : "EditarProducto")" asp-route-id="@id" method="post" enctype="multipart/form-data">
+        <div class="fila-campo @Html.ClaseError("Codigo")">
+            <label class="campo-titulo" for="Codigo">Código <span class="texto-suave">(interno o de barras)</span></label>
+            <input class="campo" id="Codigo" name="Codigo" value="@datos.Codigo" maxlength="40" pattern="[A-Za-z0-9._\-]+" autocomplete="off">
+            <p class="error-texto">@Html.MensajeError("Codigo", "Usá solo letras, números, guiones o puntos")</p>
+        </div>
         <div class="fila-campo @Html.ClaseError("Nombre")">
             <label class="campo-titulo" for="Nombre">Nombre</label>
             <input class="campo" id="Nombre" name="Nombre" value="@datos.Nombre" maxlength="120" required>
@@ -47,10 +52,17 @@
                 }
             </select>
         </div>
-        <div class="fila-campo @Html.ClaseError("Imagen")">
-            <label class="campo-titulo" for="Imagen">Imagen <span class="texto-suave">(opcional)</span></label>
-            <input class="campo" id="Imagen" name="Imagen" value="@datos.Imagen" maxlength="260" placeholder="/img/productos/cuaderno.jpg">
-            <p class="error-texto">@Html.MensajeError("Imagen", "Revisá la ruta de la imagen")</p>
+        <div class="fila-campo @Html.ClaseError("Foto")">
+            <label class="campo-titulo" for="foto">Foto <span class="texto-suave">(JPG, PNG o WEBP, hasta 5 MB)</span></label>
+            @if (!string.IsNullOrEmpty(datos.Imagen))
+            {
+                <div class="fila espacio-abajo">
+                    <img class="miniatura" src="@datos.Imagen" alt="Foto actual">
+                    <label class="casilla"><input name="quitarFoto" value="true" type="checkbox"> Quitar la foto</label>
+                </div>
+            }
+            <input class="campo" id="foto" name="foto" type="file" accept=".jpg,.jpeg,.png,.webp">
+            <p class="error-texto">@Html.MensajeError("Foto", "Subí una foto JPG, PNG o WEBP")</p>
         </div>
         <label class="casilla">
             <input id="Activo" name="Activo" value="true" checked="@datos.Activo" type="checkbox">

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Libreria3D.Models;
 
@@ -66,6 +67,11 @@ public class CheckoutViewModel
 
 public class ProductoViewModel
 {
+    // Código interno o de barras. Une el producto con las planillas de Excel y con las fotos subidas en lote.
+    [StringLength(40, ErrorMessage = "Usá hasta 40 caracteres")]
+    [RegularExpression(Planilla.FormatoCodigo, ErrorMessage = "Usá solo letras, números, guiones, puntos o guiones bajos")]
+    public string? Codigo { get; set; }
+
     [Required(ErrorMessage = "Completá el nombre")]
     [StringLength(120, ErrorMessage = "Usá hasta 120 caracteres")]
     public string Nombre { get; set; } = "";
@@ -83,8 +89,8 @@ public class ProductoViewModel
 
     public int? IDCategoria { get; set; }
 
-    [StringLength(260, ErrorMessage = "Usá hasta 260 caracteres")]
-    [RegularExpression(@"^\s*(/|https?://).*$", ErrorMessage = "Usá una ruta que empiece con / o una dirección https://")]
+    // No viene del formulario: la pone el controlador (foto actual o la que se acaba de subir).
+    [BindNever]
     public string? Imagen { get; set; }
 
     // Sin marcar el checkbox no llega nada, por eso arranca en false.
@@ -92,6 +98,7 @@ public class ProductoViewModel
 
     public static ProductoViewModel Desde(Producto p) => new()
     {
+        Codigo = p.Codigo,
         Nombre = p.Nombre,
         Descripcion = p.Descripcion,
         Precio = p.Precio,

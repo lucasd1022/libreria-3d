@@ -294,6 +294,10 @@ legend {
   margin-top: 14px;
 }
 
+.espacio-abajo {
+  margin-bottom: 10px;
+}
+
 .migas {
   color: var(--color-texto-suave);
 }
@@ -729,6 +733,19 @@ legend {
   border-radius: var(--radio);
 }
 
+.miniatura {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-chico);
+}
+
+.miniatura-chica {
+  width: 40px;
+  height: 40px;
+}
+
 .inicial-grande {
   font-size: 56px;
   font-weight: 800;
@@ -746,6 +763,14 @@ legend {
 .lista-renglones li {
   padding: 6px 0;
   border-bottom: 1px solid var(--color-superficie-suave);
+}
+
+.lista-pasos {
+  padding-left: 20px;
+}
+
+.lista-pasos li {
+  margin-bottom: 8px;
 }
 
 .lista-rotulada {

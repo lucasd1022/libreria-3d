@@ -28,7 +28,13 @@
 - **Confirmación del pedido**, que solo puede ver quien lo hizo: si es retiro muestra la dirección, los horarios y cómo llegar; si es envío, la dirección de entrega.
 - **Panel de administración** con inicio de sesión:
   - **Pedidos**: lista con filtros por forma de entrega y por estado, y detalle de cada pedido. Los estados dependen de la entrega: los de retiro pasan por "Listo para retirar" y los de envío por "Enviado" (Pendiente → Pagado → Listo para retirar / Enviado → Entregado, o Cancelado). El menú muestra cuántos pedidos están pendientes.
-  - **Productos**: crear, editar, ocultar y eliminar productos, con precio, stock, categoría e imagen. Los pedidos viejos conservan el nombre y el precio con el que se vendió cada producto.
+  - **Productos**: crear, editar, ocultar y eliminar productos, con código, precio, stock, categoría y foto (se sube desde el formulario). Se puede buscar por nombre o por código. Los pedidos viejos conservan el nombre y el precio con el que se vendió cada producto.
+  - **Carga masiva**:
+    - **Planilla de Excel o CSV**: cada fila se identifica por el **código** del producto (interno o de barras). Si el código existe, se actualiza; si no, se crea. Las categorías nuevas se crean solas y las celdas vacías no cambian nada, así que para actualizar precios alcanza con las columnas Código y Precio.
+    - **Revisión antes de aplicar**: muestra qué productos se crean, cuáles se actualizan y qué filas tienen errores (y por qué). Los cambios se aplican todos juntos en una transacción.
+    - **Exportar el catálogo** a Excel en el mismo formato, para editarlo y volver a subirlo. También hay una plantilla vacía con instrucciones.
+    - Acepta columnas en cualquier orden y con otros nombres (Rubro, SKU, Precio de venta…), precios escritos como `$ 4.500,50` y códigos de barras guardados como número.
+    - **Fotos en lote**: se suben muchas fotos juntas nombradas con el código del producto (`CUA-A4-80.jpg`) y cada una se asigna sola. Se valida que sean imágenes de verdad y de hasta 5 MB.
   - **Contraseña**: cambiar la contraseña del administrador.
 - **Seguridad**: contraseñas guardadas con PBKDF2, todos los formularios protegidos con token antifalsificación y validación de todos los datos en el servidor.
 
@@ -41,6 +47,7 @@
 | Backend | ASP.NET Core MVC (.NET 9) |
 | Base de datos | SQL Server |
 | Acceso a datos | Dapper 2.1.89 + Microsoft.Data.SqlClient 7.1.1 |
+| Planillas de Excel | ClosedXML 0.105.1 |
 | Frontend | HTML y CSS propio, sin frameworks ni JavaScript |
 
 ## 📂 Estructura del proyecto
@@ -50,7 +57,7 @@
 | `Controllers/` | Reciben el pedido, llaman al Model y devuelven la vista |
 | `Models/` | Clases del proyecto, validaciones y la clase `BD.cs` |
 | `Views/` | Vistas Razor que leen los datos desde `ViewBag` |
-| `wwwroot/` | La hoja de estilos `css/style.css` e imágenes |
+| `wwwroot/` | La hoja de estilos `css/style.css` e imágenes. Las fotos de productos se guardan en `wwwroot/uploads/productos` (no se suben al repositorio) |
 | `SQL/` | Scripts de la base: estructura, datos de prueba y stored procedures |
 | `script.sql` | Script completo para crear la base con datos y procedures |
 
@@ -62,6 +69,7 @@
 | `PedidosController` | Finalizar la compra (retiro o envío) y confirmación del pedido |
 | `CuentaController` | Iniciar y cerrar la sesión del administrador |
 | `PanelController` | Panel de administración: pedidos, productos y contraseña |
+| `CatalogoController` | Carga masiva: importar y exportar planillas, y subir fotos en lote |
 
 ### 🎨 Estilos
 
